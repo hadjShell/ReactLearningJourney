@@ -143,7 +143,7 @@ Version: 1.0
 
 ***
 
-## Working With Events
+## Interactivity
 
 * You can respond to events by declaring event handler functions **inside the components**
 
@@ -206,7 +206,7 @@ Version: 1.0
 
   * **A `state` variable's value never changes within a render, even if its event handler's code is asynchronous**
 
-* Props vs. State
+* **Props vs. State**
 
   * [**Props** are like arguments you pass](https://react.dev/learn/passing-props-to-a-component) to a function. They let a parent component pass data to a child component and customize its appearance. For example, a `Form` can pass a `color` prop to a `Button`
   * [**State** is like a component’s memory.](https://react.dev/learn/state-a-components-memory) It lets a component keep track of some information and change it in response to interactions. For example, a `Button` might keep track of `isHovered` state
@@ -226,13 +226,105 @@ Version: 1.0
        * For re-renders, React will apply the **minimal **necessary operations to make the DOM match the latest rendering output
     4. Browser paint the screen
 
-* Queueing aseries of `state` updates
+* Queueing a series of `state` updates
 
-  * 
+  * Batching
+
+    * React waits until all code in the event handlers has run before processing your state updates
+
+  * Update the same `state` multiple times before the next render
+
+    * Pass a function to `setSomething` as `nextState`, which will be treated as an **updater function**
+
+    * [Reference](https://react.dev/reference/react/useState#setstate)
+
+    * React queues this function to be processed after all the other code in the event handler has run
+
+    * During the next render, React goes through the queue and gives you the final updated `state`
+
+    * By convention, name the updater function argument by the first letters of the corresponding `state` variable
+
+      ```jsx
+      import { useState } from 'react';
+      
+      export default function Counter() {
+        const [number, setNumber] = useState(0);
+      
+        return (
+          <>
+            <h1>{number}</h1>
+            <button onClick={() => {
+              setNumber(n => n + 1);
+              setNumber(n => n + 1);
+              setNumber(n => n + 1);
+            }}>+3</button>
+          </>
+        )
+      }
+      ```
+
+* Updating Objects or Arrays in `state`
+
+  * You shouldn't change objects or arrays that you hold in the `state` directly
+  * Instead, when you want to update it, you need to create a new one (or make a copy of an existing one), and then set the `state` to use the copy
+  * **Treat `state` as read-only**
+  * Updating a nested object or array of objects: [Immer](https://github.com/immerjs/use-immer)
+    * To achieve deep clone
+
 
 ***
 
-## Styling React Components
+## Managing `state`
+
+* Thinking about UI declaratively
+
+  * Identify component's different visual states
+
+    * Treat component as a *state machine*
+    * Have a `state` variable - `status`, and let it decide how the component should look like (return different markup)
+
+  * Determine the human and computer events that trigger those state changes
+
+    * Set `state` variables to update UI
+
+  * Represent the `state` in memory with `useState`
+
+  * Remove any non-essential `state`
+
+  * Connect the event handlers to set `state`
+
+    >  Components wrap controller and view together, but make them much easier to code and much less fragile
+
+  * Refactoring
+
+* Principle for structuring `state`
+
+  * Group related state
+  * Avoid contradiction
+  * Avoid redundance
+  * Avoid duplication
+  * Avoid deeply nested `state`
+
+* Sharing  `state` between components
+
+  * Lifting `state` up
+    * Sometimes, you want the `state` of two components to always change together. To do it, remove `state` from both of them, move it to their closest common parent, and then pass `state` and `setState` down to them via `props`
+  * Uncontrolled components: components with local `state`
+  * Controlled component: the important information in it is driven by `props` rather than its own local `state`
+  * **When writing a component, consider which information in it should be controlled (*via `props`*), and which information should be uncontrolled (*via `state`*)**
+
+* React maintain an UI tree (like DOM)
+
+  * `state` is tied to a position in the tree
+    * `state` is held inside React instead of "living" inside the component
+    * **React preserves a component’s `state` for as long as it’s being rendered at its position in the UI tree.** If it gets removed, or a different component gets rendered at the same position, React discards its `state`
+      * **It's the position in the UI tree - not in the JSX markup**
+        * Same components at the same position preserves `state`
+        * Different components at the same position reset `state`
+    * `key` can be used to make React distinguish between any components
+      * `key` are not globally unique, they only specify the position within the parent
+
+***
 
 ## React Hooks
 
