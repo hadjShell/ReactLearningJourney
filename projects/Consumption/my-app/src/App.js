@@ -2,6 +2,7 @@ import ExpenseItem from "./components/ExpenseItem";
 import NewExpense from "./components/NewExpense";
 import Card from "./components/Card";
 import FilterBar from "./components/FilterBar";
+import Chart from "./components/Chart";
 import { useState } from "react";
 
 const data = [
@@ -26,9 +27,48 @@ const data = [
   },
 ];
 
+const monthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
 function App() {
   const [expenses, setExpenses] = useState(data);
-  const [year, setYear] = useState(2020);
+  const [year, setYear] = useState(2021);
+
+  const filteredeExpenses = expenses.filter(e => e.date.getFullYear() === year);
+  const monthlyStas = generateMonthlyStats(filteredeExpenses);
+
+  function generateMonthlyStats(expenses) {
+    const monthlyExpenses = [];
+    for (let i = 0; i < 12; i++) {
+      monthlyExpenses[i] = {
+        key: i,
+        value: 0,
+        month: monthNames[i],
+      };
+    }
+    console.log(monthlyExpenses);
+
+    let maxValue = 0;
+    expenses.forEach(e => {
+      monthlyExpenses[e.date.getMonth()].value += e.amount;
+      maxValue += e.amount;
+    });
+    monthlyExpenses.push(maxValue);
+
+    return monthlyExpenses;
+  }
 
   function handleNewExpense(expense) {
     setExpenses(e => [expense, ...e]);
@@ -41,17 +81,22 @@ function App() {
         id={"e" + (expenses.length + 1)}
       />
       <Card>
+        <Chart monthlyStats={monthlyStas} />
+      </Card>
+      <Card>
         <FilterBar onYearChange={setYear} />
-        {expenses
-          .filter(e => e.date.getFullYear() === year)
-          .map(expense => (
+        {filteredeExpenses.length !== 0 ? (
+          filteredeExpenses.map(expense => (
             <ExpenseItem
               title={expense.title}
               amount={expense.amount}
               date={expense.date}
               key={expense.id}
             />
-          ))}
+          ))
+        ) : (
+          <p>No expenses found.</p>
+        )}
       </Card>
     </div>
   );
