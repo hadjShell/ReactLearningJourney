@@ -114,7 +114,7 @@ Version: 1.0
 
 ### Conditional Rendering
 
-* Shortcuts: `? :`, `&&`
+* Shortcuts: `<condition> ? <content1> : <content2>`, `<conidtion> && <content>`
 
 ### Rendering lists
 
@@ -125,12 +125,11 @@ Version: 1.0
   * You need to give each array item a `key`
   * A string or a number that uniquely identifies it among other items in that array
   * Useful for future manipulations
-  * Rather than generating keys on the fly, you should include them in your data
+  * Do **NOT** generate `key` on the fly, instead you should include them in your data
   * Where to get your `key`
     * Data from a database or API: use their keys
     * Locally generated data: use an incrementing counter [`crypto.randomUUID()`](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID) or a package like [`uuid`](https://www.npmjs.com/package/uuid) when creating items
-  * Do **NOT** generate `key` on the fly
-  * The components won't receive `key` as a `prop`
+  * The components won't receive `key` as a `prop`, it's only used as a hint by React itself
   
   ```jsx
   export default function List({ people }) {
@@ -175,6 +174,9 @@ Version: 1.0
       </button>
     );
   }
+  
+  // if the handler accept parameters, a common pattern for using it is:
+  // <button onClick={() => handleClick(params)}>Click me</button>
   ```
 
 * Often you'll want the parent component to specify a child's event handler and pass it to the child as a `prop`
@@ -187,13 +189,27 @@ Version: 1.0
 
 * Custom components can have custom handler `prop` name
 
+* Event handlers receive an **event object** as their only argument. By convention, it’s usually called `e`
+
 * All events propagate in React except `onScroll`, which only works on the JSX tag you attach it to
 
   * Stop propagation: `e.stopPropagation()`
 
+* `e.preventDefault()`
+
 ### `state`
 
-* The component-specific memory
+* Why local variable isn't enough
+
+  * **Local variables don’t persist between renders.** When React renders this component a second time, it renders it from scratch—it doesn’t consider any changes to the local variables
+  * **Changes to local variables won’t trigger renders.** React doesn’t realize it needs to render the component again with the new data
+
+* To update a component with new data, two things need to happen:
+
+  * **Retain** the data between renders
+  * **Trigger** React to render the component with new data (re-rendering)
+
+* `state` is the component-specific memory
 
 * `useState(initialState)`
 
@@ -236,48 +252,49 @@ Version: 1.0
   2. Rendering the component
      * On initial render, React will call the root component `root.render()`
      * For subsequent renders, React will call the function component whose `state` update triggered the render (this process is recursive)
-       * You may have thought about the performance issue, look at the [Performance section]()
+       * You may have thought about the performance issue, look at the [Performance section](https://legacy.reactjs.org/docs/optimizing-performance.html)
   3. Committing to the DOM
      * For the initial render, React will use `appendChild()` DOM API to put all the DOM nodes it has created on the screen
      * For re-renders, React will apply the **minimal **necessary operations to make the DOM match the latest rendering output
   4. Browser paint the screen
 
-* Queueing a series of `state` updates
 
-  * Batching
+### Queueing a series of `state` updates
 
-    * React waits until all code in the event handlers has run before processing your state updates
+* Batching
 
-  * Update the same `state` multiple times before the next render
+  * React waits until all code in the event handlers has run before processing your state updates
 
-    * Pass a function to `setSomething` as `nextState`, which will be treated as an **updater function**
+* Update the same `state` multiple times before the next render
 
-    * [Reference](https://react.dev/reference/react/useState#setstate)
+  * Pass a function to `setSomething` as `nextState`, which will be treated as an **updater function**
 
-    * React queues this function to be processed after all the other code in the event handler has run
+  * [Reference](https://react.dev/reference/react/useState#setstate)
 
-    * During the next render, React goes through the queue and gives you the final updated `state`
+  * React queues this function to be processed after all the other code in the event handler has run
 
-    * By convention, name the updater function argument by the first letters of the corresponding `state` variable
+  * During the next render, React goes through the queue and gives you the final updated `state`
 
-      ```jsx
-      import { useState } from 'react';
-      
-      export default function Counter() {
-        const [number, setNumber] = useState(0);
-      
-        return (
-          <>
-            <h1>{number}</h1>
-            <button onClick={() => {
-              setNumber(n => n + 1);
-              setNumber(n => n + 1);
-              setNumber(n => n + 1);
-            }}>+3</button>
-          </>
-        )
-      }
-      ```
+  * By convention, name the updater function argument by the first letters of the corresponding `state` variable
+
+    ```jsx
+    import { useState } from 'react';
+    
+    export default function Counter() {
+      const [number, setNumber] = useState(0);
+    
+      return (
+        <>
+          <h1>{number}</h1>
+          <button onClick={() => {
+            setNumber(n => n + 1);
+            setNumber(n => n + 1);
+            setNumber(n => n + 1);
+          }}>+3</button>
+        </>
+      )
+    }
+    ```
 
 * Updating Objects or Arrays in `state`
 
