@@ -45,6 +45,7 @@ Version: 1.0
   * **As text** directly inside a JSX tag
   * **As attributes** immediately following the `=` sign
   * Any JavaScript expression will work between curly braces, including function calls
+* Fundamentally, JSX just provides a syntactic sugar for the `React.createElement` function
 
 
 ### Passing `props`  to a Component
@@ -59,7 +60,7 @@ Version: 1.0
 
 * Conventionally the parameter is named with `props`
 
-* Usually you don't need the whole `props` object itself, so destruct it into individual props
+* Usually you don't need the whole `props` object itself, so destruct it into individual `prop`
 
 * Pass `props` through multiple components
 
@@ -109,7 +110,13 @@ Version: 1.0
     }
     ```
 
+* Pass a component identifier as a value for a `prop` to dynamically render different components inside a component
+  
+  * The `prop` should be named with a start of capital letter
+  * The value: efault element: string; customised element: `{ComponentName}`
+  
 * `props` are **immutable**
+
   * When a component needs to change its props (for example, in response to a user interaction or new data), it will have to “ask” its parent component to pass it *different `props`*— a new object
 
 ### Conditional Rendering
