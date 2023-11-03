@@ -280,7 +280,7 @@ Version: 1.0
 
   * React queues this function to be processed after all the other code in the event handler has run
 
-  * During the next render, React goes through the queue and gives you the final updated `state`
+  * During the next render, React goes through the queue and gives you **the latest updated `state`**
 
   * By convention, name the updater function argument by the first letters of the corresponding `state` variable
 
@@ -303,13 +303,14 @@ Version: 1.0
     }
     ```
 
-* Updating Objects or Arrays in `state`
 
-  * You shouldn't change objects or arrays that you hold in the `state` directly
-  * Instead, when you want to update it, you need to create a new one (or make a copy of an existing one), and then set the `state` to use the copy
-  * **Treat `state` as read-only**
-  * Updating a nested object or array of objects: [Immer](https://github.com/immerjs/use-immer)
-    * To achieve deep clone
+### Updating Objects or Arrays in `state`
+
+* You shouldn't change objects or arrays that you hold in the `state` directly
+* Instead, when you want to update it, you need to create a new one (or make a copy of an existing one), and then set the `state` to use the copy
+* **Treat `state` as read-only**
+* Updating a nested object or array of objects: [Immer](https://github.com/immerjs/use-immer)
+  * To achieve deep clone
 
 
 ***
