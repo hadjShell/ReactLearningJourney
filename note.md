@@ -272,11 +272,13 @@ Version: 1.0
 
   * React waits until all code in the event handlers has run before processing your state updates
 
-* Update the same `state` multiple times before the next render
+* Update `state` based on its previous value
 
   * Pass a function to `setSomething` as `nextState`, which will be treated as an **updater function**
 
   * [Reference](https://react.dev/reference/react/useState#setstate)
+
+  * **Updater functions must be pure** and only *return* the result
 
   * React queues this function to be processed after all the other code in the event handler has run
 
@@ -311,59 +313,62 @@ Version: 1.0
 * **Treat `state` as read-only**
 * Updating a nested object or array of objects: [Immer](https://github.com/immerjs/use-immer)
   * To achieve deep clone
+  * How to use Immer
+    * Run `npm install use-immer` to add Immer as a dependency
+    * Then replace `import { useState } from 'react'` with `import { useImmer } from 'use-immer'`
 
 
 ***
 
 ## Managing `state`
 
-* Thinking about UI declaratively
+### Thinking about UI declaratively
 
-  * Identify component's different visual states
+* Identify component's different visual states
 
-    * Treat component as a *state machine*
-    * Have a `state` variable - `status`, and let it decide how the component should look like (return different markup)
+  * Treat component as a ***state machine***
+  * Have a `state` variable - `status`, and let it decide how the component should look like (return different markup)
 
-  * Determine the human and computer events that trigger those state changes
+* Determine the human or computer events that trigger those state changes
 
-    * Set `state` variables to update UI
+  * Set `state` variables to update UI
 
-  * Represent the `state` in memory with `useState`
+* Represent the `state` in memory with `useState`
 
-  * Remove any non-essential `state`
+* Remove any non-essential `state`
 
-  * Connect the event handlers to set `state`
+* Connect the event handlers to `setState`
 
-    >  Components wrap controller and view together, but make them much easier to code and much less fragile
+  >  Components wrap controller and view together, but make them much easier to code and much less fragile
 
-  * Refactoring
+* Two-way binding for updating inputs
 
-* Principle for structuring `state`
+### Principle for structuring `state`
 
-  * Group related state
-  * Avoid contradiction
-  * Avoid redundance
-  * Avoid duplication
-  * Avoid deeply nested `state`
+* Group related state
+* Avoid contradiction
+* Avoid redundance
+* Avoid duplication
+* Avoid deeply nested `state`
 
-* Sharing  `state` between components
+### Sharing  `state` between components
 
-  * Lifting `state` up
-    * Sometimes, you want the `state` of two components to always change together. To do it, remove `state` from both of them, move it to their closest common parent, and then pass `state` and `setState` down to them via `props`
-  * Uncontrolled components: components with local `state`
-  * Controlled component: the important information in it is driven by `props` rather than its own local `state`
-  * **When writing a component, consider which information in it should be controlled (*via `props`*), and which information should be uncontrolled (*via `state`*)**
+* Lifting `state` up
+  * Sometimes, you want the `state` of two components to always change together. To do it, remove `state` from both of them, move it to their closest common parent, and then pass `state` and `setState` down to them via `props`
+* Uncontrolled components: components with local `state`
+* Controlled component: the important information in it is driven by `props` rather than its own local `state`
+* **When writing a component, consider which information in it should be controlled (*via `props`*), and which information should be uncontrolled (*via `state`*)**
 
-* React maintain an UI tree (like DOM)
+### React maintain an UI tree (like DOM)
 
-  * `state` is tied to a position in the tree
-    * `state` is held inside React instead of "living" inside the component
-    * **React preserves a component’s `state` for as long as it’s being rendered at its position in the UI tree.** If it gets removed, or a different component gets rendered at the same position, React discards its `state`
-      * **It's the position in the UI tree - not in the JSX markup**
-        * Same components at the same position preserves `state`
-        * Different components at the same position reset `state`
-    * `key` can be used to make React distinguish between any components
-      * `key` are not globally unique, they only specify the position within the parent
+* `state` is tied to a position in the tree
+  * `state` is held inside React instead of "living" inside the component
+  * **React preserves a component’s `state` for as long as it’s being rendered at its position in the UI tree.** If it gets removed, or a different component gets rendered at the same position, React discards its `state`
+    * **It's the position in the UI tree - not in the JSX markup**
+      * Same components at the same position preserves `state`
+      * Different components at the same position reset `state`
+  * `key` can be used to make React distinguish between any components
+    * `key` are not globally unique, they only specify the position within the parent
 
 ***
 
