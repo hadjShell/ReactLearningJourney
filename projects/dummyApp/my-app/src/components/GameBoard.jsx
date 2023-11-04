@@ -1,19 +1,15 @@
-import { useImmer } from "use-immer";
-
-const INITIAL_GAME_BOARD = [
-  [null, null, null],
-  [null, null, null],
-  [null, null, null],
-];
-
-export default function GameBoard({ turn, setTurn, handleLog }) {
-  const [gameBoard, setGameBoard] = useImmer(INITIAL_GAME_BOARD);
-
+export default function GameBoard({
+  gameBoard,
+  setGameBoard,
+  turn,
+  setTurn,
+  updateLog,
+}) {
   function handleClick(ri, ci, symbol) {
     setGameBoard(gb => {
       gb[ri][ci] = symbol;
     });
-    handleLog(ri, ci);
+    updateLog(ri, ci);
     const turn = symbol === "X" ? "O" : "X";
     setTurn(turn);
   }
@@ -25,7 +21,12 @@ export default function GameBoard({ turn, setTurn, handleLog }) {
           <ol>
             {row.map((col, ci) => (
               <li key={ci}>
-                <button onClick={() => handleClick(ri, ci, turn)}>{col}</button>
+                <button
+                  onClick={() => handleClick(ri, ci, turn)}
+                  disabled={col !== null}
+                >
+                  {col}
+                </button>
               </li>
             ))}
           </ol>

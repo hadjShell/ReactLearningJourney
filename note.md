@@ -358,6 +358,7 @@ Version: 1.0
 * Uncontrolled components: components with local `state`
 * Controlled component: the important information in it is driven by `props` rather than its own local `state`
 * **When writing a component, consider which information in it should be controlled (*via `props`*), and which information should be uncontrolled (*via `state`*)**
+* **Single source of truth**
 
 ### React maintain an UI tree (like DOM)
 
@@ -368,6 +369,7 @@ Version: 1.0
       * Same components at the same position preserves `state`
       * Different components at the same position reset `state`
   * `key` can be used to make React distinguish between any components
+    * Keys aren't just for lists
     * `key` are not globally unique, they only specify the position within the parent
 
 ***

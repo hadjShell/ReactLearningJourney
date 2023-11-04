@@ -5,7 +5,7 @@ export default function Player({ defaultName, symbol, turn }) {
   const [name, setName] = useState(defaultName);
 
   return (
-    <li className={symbol === turn && "active"}>
+    <li className={symbol === turn ? "active" : undefined}>
       <span className="player">
         {!isEdited ? (
           <span className="player-name">{name}</span>
