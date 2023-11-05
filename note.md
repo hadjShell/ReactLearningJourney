@@ -374,6 +374,51 @@ Version: 1.0
 
 ***
 
+## Styling React Components
+
+### Styling with vanilla CSS
+
+* Import CSS file into corresponding JSX file
+* Pros
+  * CSS code is decoupled from JSX code
+* Cons
+  * You need to know CSS
+  * **CSS is not scoped to components**, CSS rules may clash across components
+
+### Scoping Styles
+
+* Use inline `style` attribute 
+  * The value is an object, not a string
+* Use CSS modules
+  * Change `Component.css` to `Component.module.css`
+  * Change `import "./Component.css"` to `import classes from "./Component.module.css"`
+  * `<p className={classes.paragraph}>test</p>`
+* CSS-IN-JS Styling with "Styled Components"
+  * Use a package [Styled components](https://styled-components.com/) 
+
+
+### Styling with Tailwind CSS
+
+* The main idea of Tailwind: add tiny utility CSS classes to HTML elements
+* [Tailwind website](https://tailwindcss.com/)
+
+### Dynamic Styling
+
+* Dynamic inline styling
+* Dynamic styling by add class name to component dynamically, using template literal
+
+***
+
+## Debugging React Apps
+
+* Error messages
+* Browser debugger
+* "strict mode"
+  * A React component `StrictMode` as an wrapper for other components
+* React DevTools
+
+***
+
 ## React Hooks
 
 * Functions starting with `use`
