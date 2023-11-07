@@ -272,7 +272,7 @@ Version: 1.0
 
   * React waits until all code in the event handlers has run before processing your state updates
 
-* Update `state` based on its previous value
+* Update `state` **based on its previous value**
 
   * Pass a function to `setSomething` as `nextState`, which will be treated as an **updater function**
 
@@ -280,7 +280,7 @@ Version: 1.0
 
   * **Updater functions must be pure** and only *return* the result
 
-  * React queues this function to be processed after all the other code in the event handler has run
+  * **React queues this function to be processed after all the other code in the event handler has run**
 
   * During the next render, React goes through the queue and gives you **the latest updated `state`**
 
@@ -304,6 +304,17 @@ Version: 1.0
       )
     }
     ```
+
+* Update the DOM synchronously
+
+  ```react
+  flushSync(() => {
+    setTodos([ ...todos, newTodo]);
+  });
+  listRef.current.lastChild.scrollIntoView();
+  ```
+
+  * This will instruct React to update the DOM synchronously right after the code wrapped in `flushSync` executes
 
 
 ### Updating Objects or Arrays in `state`
@@ -353,7 +364,7 @@ Version: 1.0
 
 ### Sharing  `state` between components
 
-* Lifting `state` up
+* **Lifting `state` up**
   * Sometimes, you want the `state` of two components to always change together. To do it, remove `state` from both of them, move it to their closest common parent, and then pass `state` and `setState` down to them via `props`
 * Uncontrolled components: components with local `state`
 * Controlled component: the important information in it is driven by `props` rather than its own local `state`
@@ -416,6 +427,54 @@ Version: 1.0
 * "strict mode"
   * A React component `StrictMode` as an wrapper for other components
 * React DevTools
+
+***
+
+## Refs & Portals
+
+### What is Refs
+
+* When you want a component to store some information, but you don't want to that information to trigger new renders, you can use a `ref`
+
+* Adding a `ref` to your component
+
+  ```react
+  import { useRef } from 'react';
+  
+  const ref = useRef(0);
+  // useRef returns an object like this:
+  // { current: 0 }
+  ```
+
+* You can mutate `ref` instead of using a set function, just change the value of `ref.current`
+
+* **`ref` is mutable; `state` is immutable**
+
+* When to use `refs`
+
+  * Storing `timeout` IDs
+  * Storing and manipulating DOM elements
+  * Storing other objects that aren't necessary to calculate the JSX
+
+* **Usually, you will access `refs` from event handlers**
+
+### Manipulating DOM with `refs`
+
+* DOM manipulation is the most common use case for `refs`
+
+* Getting a `ref` to the node
+
+  ```react
+  const myRef = useRef(null);
+  
+  <div ref={myRef}></div>
+  
+  myRef.current.scrollIntoView();
+  ```
+
+* Accessing another component's DOM nodes
+
+* Avoid changing DOM nodes managed by React
 
 ***
 
