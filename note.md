@@ -48,13 +48,13 @@ Version: 1.0
 * Fundamentally, JSX just provides a syntactic sugar for the `React.createElement` function
 
 
-### Passing `props`  to a Component
+### `props` 
 
 * `props` are the information that you pass to a JSX tag
 
 * Process
 
-  * Set `props`: Add custom attributes onto the custom HTML elements (components)
+  * Set `props`: Add **custom attributes** onto the custom HTML elements (components)
   * Merge into object: React merges all `props` into a single object
   * Receive `props`: Components (the function) will accept the `props` as the first argument
 
@@ -74,7 +74,7 @@ Version: 1.0
   }
   ```
 
-* De-constructing or setting default values on `props`: `...`
+  * De-constructing or setting default values on `props`: `...`
 
 * Composition of components
 
@@ -111,10 +111,10 @@ Version: 1.0
     ```
 
 * Pass a component identifier as a value for a `prop` to dynamically render different components inside a component
-  
+
   * The `prop` should be named with a start of capital letter
-  * The value: efault element: string; customised element: `{ComponentName}`
-  
+  * The value: default element: string; customised element: `{ComponentName}`
+
 * `props` are **immutable**
 
   * When a component needs to change its props (for example, in response to a user interaction or new data), it will have to “ask” its parent component to pass it *different `props`*— a new object
@@ -123,11 +123,11 @@ Version: 1.0
 
 * Shortcuts: `<condition> ? <content1> : <content2>`, `<conidtion> && <content>`
 
-### Rendering lists
+### Rendering Lists
 
 * `map`, `filter`: array of objects to array of JSX markup
 
-* `key`
+* **`key`**
 
   * You need to give each array item a `key`
   * A string or a number that uniquely identifies it among other items in that array
@@ -147,7 +147,7 @@ Version: 1.0
   }
   ```
 
-### Keep components **Pure**
+### Keep Components **Pure**
 
 * Components should only return their JSX, and not change any objects or variables that existed before rendering
   * It's totally okay to change variables and objects that you've just created while rendering inside the component functions
@@ -222,7 +222,7 @@ Version: 1.0
 
   * A React Hook that lets you add a state variable to your component
   * `initialState`
-    * The value you want the state to be initially
+    * The value you want the `state` to be initially
   * Returns
     * The current `state` variable to retain data between renders
     * The `set` function that lets you update the state to a different value and trigger a re-render
@@ -238,16 +238,16 @@ Version: 1.0
 
 * You can have as many state variables of as many types as you like in one component
 
-* State is isolated and private
+* `state` is isolated and private
 
   * If you render the same component multiple times, each will get its own state
   * State is fully private to the component declaring it, the parent component cannot change it
 
 * **A `state` variable's value never changes within a render, even if its event handler's code is asynchronous**
 
-* **Props vs. State**
+* **`props` vs. `state`**
 
-  * [**Props** are like arguments you pass](https://react.dev/learn/passing-props-to-a-component) to a function. They let a parent component pass data to a child component and customize its appearance. For example, a `Form` can pass a `color` prop to a `Button`
+  * [**Props** are like arguments you pass](https://react.dev/learn/passing-props-to-a-component) to a function. They let a parent component pass data to a child component and customize its appearance. For example, a `Form` can pass a `color` `prop` to a `Button`
   * [**State** is like a component’s memory.](https://react.dev/learn/state-a-components-memory) It lets a component keep track of some information and change it in response to interactions. For example, a `Button` might keep track of `isHovered` state
 
 ### Render and Commit
@@ -274,7 +274,7 @@ Version: 1.0
 
 * Update `state` **based on its previous value**
 
-  * Pass a function to `setSomething` as `nextState`, which will be treated as an **updater function**
+  * Pass **a function** to `setSomething` as `nextState`, which will be treated as an **updater function**
 
   * [Reference](https://react.dev/reference/react/useState#setstate)
 
@@ -379,9 +379,9 @@ Version: 1.0
     * **It's the position in the UI tree - not in the JSX markup**
       * Same components at the same position preserves `state`
       * Different components at the same position reset `state`
-  * `key` can be used to make React distinguish between any components
-    * Keys aren't just for lists
-    * `key` are not globally unique, they only specify the position within the parent
+* `key` can be used to make React distinguish between any components
+  * Keys aren't just for lists
+  * `key` are not globally unique, they only specify the position within the parent
 
 ***
 
@@ -476,7 +476,7 @@ Version: 1.0
 
   * By default. React does not let a component access the DOM nodes of other components
 
-  * A component can specify that it "forwards" its `ref` to one of its children
+  * A component can specify that it "forwards" its `ref` to one of **its children**
 
     ```react
     const MyInput = forwardRef((props, ref) => {
@@ -488,7 +488,7 @@ Version: 1.0
     * The `MyInput` component is declared using `forwardRef`. **This opts it into receiving the `inputRef` from above as the second `ref` argument** which is declared after `props`
     * `MyInput` itself passes the `ref` it received to the `<input>` inside of it
 
-  * In design systems, it is a common pattern for low-level components like buttons, inputs, and so on, to forward their refs to their DOM nodes.
+  * In design systems, it is a common pattern for low-level components like buttons, inputs, and so on, to forward their refs to their DOM nodes
 
   * You can expose component APIs via `useImperativeHandle` hook
 
