@@ -430,7 +430,7 @@ Version: 1.0
 
 ***
 
-## Refs & Portals
+## Refs
 
 ### What is Refs
 
@@ -473,6 +473,24 @@ Version: 1.0
   ```
 
 * Accessing another component's DOM nodes
+
+  * By default. React does not let a component access the DOM nodes of other components
+
+  * A component can specify that it "forwards" its `ref` to one of its children
+
+    ```react
+    const MyInput = forwardRef((props, ref) => {
+      return <input {...props} ref={ref} />;
+    });
+    ```
+
+    * `<MyInput ref={inputRef} />` tells React to put the corresponding DOM node into `inputRef.current`. However, it’s up to the `MyInput` component to opt into that—by default, it doesn’t
+    * The `MyInput` component is declared using `forwardRef`. **This opts it into receiving the `inputRef` from above as the second `ref` argument** which is declared after `props`
+    * `MyInput` itself passes the `ref` it received to the `<input>` inside of it
+
+  * In design systems, it is a common pattern for low-level components like buttons, inputs, and so on, to forward their refs to their DOM nodes.
+
+  * You can expose component APIs via `useImperativeHandle` hook
 
 * Avoid changing DOM nodes managed by React
 
