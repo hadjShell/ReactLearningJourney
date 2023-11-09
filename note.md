@@ -430,9 +430,9 @@ Version: 1.0
 
 ***
 
-## Refs
+## `Refs`
 
-### What is Refs
+### What is `Refs`
 
 * When you want a component to store some information, but you don't want to that information to trigger new renders, you can use a `ref`
 
