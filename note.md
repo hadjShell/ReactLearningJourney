@@ -383,6 +383,101 @@ Version: 1.0
   * Keys aren't just for lists
   * `key` are not globally unique, they only specify the position within the parent
 
+### Context API
+
+* Prop drilling: passing shared data through multiple components layers
+
+* It can be a problem when you have too many `state` to manage
+
+* Solution 1: Component Composition
+
+* **Context**
+
+  * Lets the parent component make some information available to any component in the tree below it—no matter how deep—without passing it explicitly through props
+
+  * **How to use `Context`**
+
+    1. Create the context
+
+       * Create a context in a new file and export it
+
+         ```react
+         import { createContext } from 'react';
+         
+         export const LevelContext = createContext(1);
+         ```
+
+       * The only argument to `createContext` is the *default* value
+
+    2. Provide the context
+
+       * If you don’t provide the context, React will use the default value
+
+       * Wrap the component who provide context with a context provider
+
+         ```react
+         // Section.js
+         import { LevelContext } from './LevelContext.js';
+         
+         export default function Section({ level, children }) {
+           return (
+             <section className="section">
+               <LevelContext.Provider value={level}>
+               {/* This tells React:
+               		If any component inside <Section> ask for `LevelContext,
+               		give them this `level`.
+               		The component will use the value of the nearest
+               		<LevelContext.Provider> in the UI tree above it
+               */}
+                 {children}
+               </LevelContext.Provider>
+             </section>
+           );
+         }
+         ```
+
+    3. Consume the context
+
+       ```react
+       // Heading.js
+       import { useContext } from 'react';
+       import { LevelContext } from './LevelContext.js';
+       
+       export default function Heading({ children }) {
+         const level = useContext(LevelContext);
+         // `useContext` tells React that the `Heading`component wants to 
+         // read the `LevelContext`
+         
+         // ...
+       }
+       
+       // App.js
+       <Section level={4}>
+         <Heading>Sub-sub-heading</Heading>
+         <Heading>Sub-sub-heading</Heading>
+         <Heading>Sub-sub-heading</Heading>
+       </Section>
+       ```
+
+       * React will re-execute the component function if the context value changes
+
+  * **Context lets you write components that “adapt to their surroundings” and display themselves differently depending on *where* (or, in other words, *in which context*) they are being rendered**
+
+  * In React, the only way to override some context coming from above is to wrap children into a context provider with a different value
+
+  * Different React contexts don't override each other
+
+  * One component may use or provide many different contexts without a problem
+
+  * **Use case for context**
+
+    * **Theming:** If your app lets the user change its appearance (e.g. dark mode), you can put a context provider at the top of your app, and use that context in components that need to adjust their visual look
+    * **Current account:** Many components might need to know the currently logged in user. Putting it in context makes it convenient to read it anywhere in the tree. Some apps also let you operate multiple accounts at the same time (e.g. to leave a comment as a different user). In those cases, it can be convenient to wrap a part of the UI into a nested provider with a different current account value
+    * **Routing:** Most routing solutions use context internally to hold the current route. This is how every link “knows” whether it’s active or not. If you build your own router, you might want to do it too
+    * **Managing state:** As your app grows, you might end up with a lot of state closer to the top of your app. Many distant components below may want to change it. It is common to [use a reducer together with context](https://react.dev/learn/scaling-up-with-reducer-and-context) to manage complex state and pass it down to distant components without too much hassle
+
+  * Outsourcing `context` and `state` into a separate Provider component is also a common pattern
+
 ***
 
 ## Styling React Components
@@ -472,7 +567,7 @@ Version: 1.0
   myRef.current.scrollIntoView();
   ```
 
-* Accessing another component's DOM nodes
+* **Accessing another component's DOM nodes**
 
   * By default. React does not let a component access the DOM nodes of other components
 
@@ -490,7 +585,7 @@ Version: 1.0
 
   * In design systems, it is a common pattern for low-level components like buttons, inputs, and so on, to forward their refs to their DOM nodes
 
-  * You can expose component APIs via `useImperativeHandle` hook
+* You can expose component APIs via `useImperativeHandle` hook
 
 * Avoid changing DOM nodes managed by React
 
