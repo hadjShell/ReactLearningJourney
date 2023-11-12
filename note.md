@@ -402,6 +402,7 @@ Version: 1.0
        * Create a context in a new file and export it
 
          ```react
+         // LevelContext.js
          import { createContext } from 'react';
          
          export const LevelContext = createContext(1);
@@ -436,6 +437,8 @@ Version: 1.0
          }
          ```
 
+       * **Outsourcing `context` and `state` into a separate Provider component is also a common pattern**
+
     3. Consume the context
 
        ```react
@@ -461,6 +464,21 @@ Version: 1.0
 
        * React will re-execute the component function if the context value changes
 
+       * You can also outsource `useContext(LevelContext)` into the Provider component
+
+         ```react
+         // LevelContext.js
+         export function useLevel() {
+           return useContext(LevelContext);
+         }
+         
+         // Heading.js
+         import { useLevel } from "./LevelContext.js";
+         const level = useContext();
+         ```
+
+         * Export custom Hooks
+
   * **Context lets you write components that “adapt to their surroundings” and display themselves differently depending on *where* (or, in other words, *in which context*) they are being rendered**
 
   * In React, the only way to override some context coming from above is to wrap children into a context provider with a different value
@@ -476,7 +494,151 @@ Version: 1.0
     * **Routing:** Most routing solutions use context internally to hold the current route. This is how every link “knows” whether it’s active or not. If you build your own router, you might want to do it too
     * **Managing state:** As your app grows, you might end up with a lot of state closer to the top of your app. Many distant components below may want to change it. It is common to [use a reducer together with context](https://react.dev/learn/scaling-up-with-reducer-and-context) to manage complex state and pass it down to distant components without too much hassle
 
-  * Outsourcing `context` and `state` into a separate Provider component is also a common pattern
+### Reducer
+
+* A reducer in React or JavaScript programming is a function that reduce one or more complex values to a simpler one
+
+* You can consolidate state update logic with a reducer outside your component in a single function, called `reducer`
+
+* How to use Reducer
+
+  1. Move from setting state to dispatch actions
+
+     ```react
+     // From this
+     function handleAddTask(text) {
+       setTasks([
+         ...tasks,
+         {
+           id: nextId++,
+           text: text,
+           done: false,
+         },
+       ]);
+     }
+     
+     function handleChangeTask(task) {
+       setTasks(
+         tasks.map((t) => {
+           if (t.id === task.id) {
+             return task;
+           } else {
+             return t;
+           }
+         })
+       );
+     }
+     
+     function handleDeleteTask(taskId) {
+       setTasks(tasks.filter((t) => t.id !== taskId));
+     }
+     
+     // To this
+     function handleAddTask(text) {
+       dispatch(
+         // "action" object
+         {
+           type: 'ADD',
+           payload: {
+             id: nextId++,
+           	text: text,
+           }
+       	}
+       );
+     }
+     
+     function handleChangeTask(task) {
+       dispatch({
+         type: 'CHANGE',
+         payload: task,
+       });
+     }
+     
+     function handleDeleteTask(taskId) {
+       dispatch({
+         type: 'DELETE',
+         payload: taskId,
+       });
+     }
+     ```
+
+     * An action object can have any shapes, by convention it's common to give a string `type` that describes what happened, and pass any additional information in an object `payload`
+
+  2. Write a reducer function
+
+     1. Declare the current `state` as the first argument
+     2. Declare the `action` object as the second argument
+     3. Return the next `state` from the reducer
+
+     ```react
+     function yourReducer(state, action) {
+       // return next state for React to set
+     }
+     ```
+
+     ```react
+     function tasksReducer(tasks, action) {
+       switch (action.type) {
+         case 'ADD': {
+           return [
+             ...tasks,
+             {
+               id: action.payload.id,
+               text: action.payload.text,
+               done: false,
+             },
+           ];
+         }
+         case 'CHANGE': {
+           return tasks.map((t) => {
+             if (t.id === action.payload.id) {
+               return action.payload;
+             } else {
+               return t;
+             }
+           });
+         }
+         case 'DELETE': {
+           return tasks.filter((t) => t.id !== action.payload);
+         }
+         default: {
+           throw Error('Unknown action: ' + action.type);
+         }
+       }
+     }
+     ```
+
+     * It is recommend wrapping each `case` block into the `{` and `}` curly braces so that variables declared inside of different `case`s don’t clash with each other
+     * Reducer function is declared **outside the component function** so that it won't be re-created every time the component gets updated
+
+  3. Use the reducer from your component
+
+     ```react
+     import {useReducer} from 'react';
+     
+     // From this
+     const [tasks, setTasks] = useState(initialTasks);
+     
+     // To this 
+     const [tasks, dispatch] = useReducer(tasksReducer, initialTasks);
+     ```
+
+     * The `useReducer` Hook takes two arguments:
+       1. A reducer function
+       2. An initial state
+     * And it returns:
+       1. A stateful value
+       2. A dispatch function (to “dispatch” user actions to the reducer)
+     * If you want, you can even move the reducer to a different file
+
+* **Reducer must be pure**
+
+* Each action describes a single user interaction, even if that leads to multiple changes in the data
+
+* Writing concise reducer with `immer`
+
+  * `useImmerReducer`
+  * Reducers managed by `useImmerReducer` can mutate their first argument `draft` and don’t need to return state (**remember to `break`**)
 
 ***
 
