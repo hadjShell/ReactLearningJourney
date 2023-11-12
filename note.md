@@ -365,7 +365,7 @@ Version: 1.0
 ### Sharing  `state` between components
 
 * **Lifting `state` up**
-  * Sometimes, you want the `state` of two components to always change together. To do it, remove `state` from both of them, move it to their closest common parent, and then pass `state` and `setState` down to them via `props`
+  * Sometimes, you want the `state` of two components to always change together. To do it, remove `state` from both of them, move it to their closest common parent, and then pass `state` and `setState` down to them **via `props`**
 * Uncontrolled components: components with local `state`
 * Controlled component: the important information in it is driven by `props` rather than its own local `state`
 * **When writing a component, consider which information in it should be controlled (*via `props`*), and which information should be uncontrolled (*via `state`*)**
@@ -687,9 +687,9 @@ Version: 1.0
 
 ***
 
-## `Refs`
+## `refs`
 
-### What is `Refs`
+### What is `refs`
 
 * When you want a component to store some information, but you don't want to that information to trigger new renders, you can use a `ref`
 
@@ -750,6 +750,72 @@ Version: 1.0
 * You can expose component APIs via `useImperativeHandle` hook
 
 * Avoid changing DOM nodes managed by React
+
+***
+
+## Dealing with `Effects`
+
+### What is `Effects`
+
+* Two types of logic inside React components
+  * **Rendering code**
+    * Where you take the `props` and `state`, transform them, and return the JSX you want to see on the screen
+    * Renderer must be pure
+  * **Event handlers**
+    * Nested functions inside your components that do things rather than just calculate them
+    * Event handlers contain [“side effects”](https://en.wikipedia.org/wiki/Side_effect_(computer_science)) (they change the program’s state) caused by a specific user action
+  * Sometimes it isn't enough
+* `effects` let you specify side effects are **caused by rendering itself, rather than by a particular event**
+* `effects` run at the end of a [commit](#render-and-commit) after the screen updates. This is a good time to synchronize the React components with some **external system** (like network or a third-party library or browser APIs)
+* A potential problem with `effects` and `setState`: an infinte loop
+  * `effect` execute after rendering, `setState` inside `effect` re-trigger the rendering
+
+### `effects` & `dependencies`
+
+* How to write an `effect`
+
+  1. Declare an `effect`
+
+     * By default, your `effect` will run every render
+
+     ```react
+     useEffect(() => {
+       // Code here will run
+     });
+     ```
+
+  2. Specify the `dependencies`
+
+     * Most `effects` should only re-run when needed rather than after every render
+     * You can tell React to skip unnecessary re-running the `effect` by specifying an **array** of `dependencies` as the second argument to the `useEffect` call
+     * The dependency array can contain multiple dependencies. **React will only skip re-running the `effect` if *all* of the dependencies you specify have exactly the same values as they had during the previous render**
+     * You can't "choose" your dependencies
+
+     ```react
+     useEffect(() => {
+       // This runs after every render
+     });
+     
+     useEffect(() => {
+       // This runs only on mount (when the component appears)
+     }, []);
+     
+     useEffect(() => {
+       // This runs on mount and also if either a or b have changed since the last render
+     }, [a, b]);
+     ```
+
+     *  React compares the dependency values using the [`Object.is`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is) comparison
+       * The problem with object or function dependencies: infinite loop
+         * `effect` execute even if the dependencies are logically equivalent (*with different pointers*)
+         * **`useCallback`** to solve this problem
+           * Wrap the function dependencies in the `useCallback()`
+
+  3. Add cleanup if needed
+
+     * Some `effects` need to specify how to stop, undo, or clean up whatever they were doing
+
+### When NOT to use `useEffect()`
 
 ***
 
