@@ -769,6 +769,7 @@ Version: 1.0
 * `effects` run at the end of a [commit](#render-and-commit) after the screen updates. This is a good time to synchronize the React components with some **external system** (like network or a third-party library or browser APIs)
 * A potential problem with `effects` and `setState`: an infinte loop
   * `effect` execute after rendering, `setState` inside `effect` re-trigger the rendering
+  * Solution: set up dependencies
 
 ### `effects` & `dependencies`
 
@@ -814,8 +815,41 @@ Version: 1.0
   3. Add cleanup if needed
 
      * Some `effects` need to specify how to stop, undo, or clean up whatever they were doing
+     * Return a cleanup function from your `effect`
+     * React will call your cleanup function **each time before the `effect` runs again**, and one final time when **the component unmounts (gets removed)**
+
+     ```react
+       useEffect(() => {
+         const connection = createConnection();
+         connection.connect();
+         return () => {
+           connection.disconnect();
+         };
+       }, []);
+     ```
+
+* Use `key` for resetting components
+
+  * React will destroy the old component instance if the value of `key` has changed
+  * Unmount and remount the component
+
+* How to handle React remount the component twice in development
+
+  * Controlling non-React widgets
+  * Subscribing to events
+  * Triggering animations
+  * Fetching data
+  * Sending analytics
+
+* Additionally, React will remount the `effects` whenever you save a file in development
 
 ### When NOT to use `useEffect()`
+
+* Some logic should only run once when the application starts. You can put it outside your components
+  * Those codes wil execute once the first time the file is imported
+* Updating state based on `props` and `state`
+  * Calculate the value inside the component
+* 
 
 ***
 
