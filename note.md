@@ -255,10 +255,10 @@ Version: 1.0
 * The process of requesting and serving UI
   1. Triggering a render
      * Component's initial render, or
-     * The component's `state` has been updated
-  2. Rendering the component
+     * The component's (or one of its ancestors) `state` has been updated
+  2. Rendering the component (**Calling your components**)
      * On initial render, React will call the root component `root.render()`
-     * For subsequent renders, React will call the function component whose `state` update triggered the render (this process is recursive)
+     * For **subsequent renders**, React will call the function component whose `state` update triggered the render (this process is recursive)
        * You may have thought about the performance issue, look at the [Performance section](https://legacy.reactjs.org/docs/optimizing-performance.html)
   3. Committing to the DOM
      * For the initial render, React will use `appendChild()` DOM API to put all the DOM nodes it has created on the screen
@@ -765,7 +765,7 @@ Version: 1.0
     * Nested functions inside your components that do things rather than just calculate them
     * Event handlers contain [“side effects”](https://en.wikipedia.org/wiki/Side_effect_(computer_science)) (they change the program’s state) caused by a specific user action
   * Sometimes it isn't enough
-* `effects` let you specify side effects are **caused by rendering itself, rather than by a particular event**
+* `effects` let you specify side effects are **caused by rendering itself, or father components' `state` change (*which is, essentially, re-rendering itself*), rather than by a particular event**
 * `effects` run at the end of a [commit](#render-and-commit) after the screen updates. This is a good time to synchronize the React components with some **external system** (like network or a third-party library or browser APIs)
 * A potential problem with `effects` and `setState`: an infinte loop
   * `effect` execute after rendering, `setState` inside `effect` re-trigger the rendering

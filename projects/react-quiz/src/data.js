@@ -71,4 +71,4 @@ export const QUESTIONS = [
   },
 ];
 
-export const TIME_ANSWER_EXPIRED = 5;
+export const TIME_ANSWER_EXPIRED = 15;

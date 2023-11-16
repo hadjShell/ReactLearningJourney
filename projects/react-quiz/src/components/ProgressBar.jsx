@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
-import { TIME_ANSWER_EXPIRED } from "../data";
+import { useState, useEffect, useContext } from "react";
+import { TimeContext } from "./WaitTimeContext";
 
 export default function ProgressBar() {
   const [timePassed, setTimePassed] = useState(0);
+  const waitTime = useContext(TimeContext);
 
   useEffect(() => {
     setTimePassed(0);
@@ -12,16 +13,12 @@ export default function ProgressBar() {
     return () => {
       clearInterval(timer);
     };
-  }, []);
+  }, [waitTime]);
 
   return (
     <div>
       <label>Remaining time for answering this question: </label>
-      <progress
-        id="question-time"
-        value={timePassed}
-        max={TIME_ANSWER_EXPIRED * 1000}
-      ></progress>
+      <progress id="question-time" value={timePassed} max={waitTime}></progress>
     </div>
   );
 }
