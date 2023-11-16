@@ -155,7 +155,7 @@ Version: 1.0
 * React offers a "Strict mode" in which it calls each component's function twice during development
 * By calling the component functions twice, strict mode helps find components that break these rules
 * Strict mode has no effect in production
-* Side effects
+* [Side effects](#dealing-with-effects)
   * In React, **side effects usually belong inside event handlers**
   * Even though event handlers are defined *inside* your component, they don’t run *during* rendering! **So event handlers don’t need to be pure**
   * As a last resort, use `useEffect`
@@ -256,14 +256,28 @@ Version: 1.0
   1. Triggering a render
      * Component's initial render, or
      * The component's (or one of its ancestors) `state` has been updated
-  2. Rendering the component (**Calling your components**)
+  2. Rendering the component (**Calling your component function**)
      * On initial render, React will call the root component `root.render()`
      * For **subsequent renders**, React will call the function component whose `state` update triggered the render (this process is recursive)
        * You may have thought about the performance issue, look at the [Performance section](https://legacy.reactjs.org/docs/optimizing-performance.html)
   3. Committing to the DOM
      * For the initial render, React will use `appendChild()` DOM API to put all the DOM nodes it has created on the screen
      * For re-renders, React will apply the **minimal **necessary operations to make the DOM match the latest rendering output
+       * With the help of a virtual DOM
   4. Browser paint the screen
+* Optimisation by avoiding unnecessary component function execution
+  * `memo()`
+    * Wrap the component function as a parameter of `memo()`
+    * Component function won't execute if the `props` value are the same
+    * Blocking a component execution will also block all children components execution
+    * However,
+      * Don't overuse `memo()`
+      * Use it as high up in the component tree as possible
+      * Checking `props` with `memo()` costs performance
+      * Don't use it on components where `props` change frequently
+
+  * Refactor your project to a clever structure
+
 
 
 ### Queueing a series of `state` updates
@@ -373,15 +387,19 @@ Version: 1.0
 
 ### React maintain an UI tree (like DOM)
 
-* `state` is tied to a position in the tree
-  * `state` is held inside React instead of "living" inside the component
-  * **React preserves a component’s `state` for as long as it’s being rendered at its position in the UI tree.** If it gets removed, or a different component gets rendered at the same position, React discards its `state`
-    * **It's the position in the UI tree - not in the JSX markup**
-      * Same components at the same position preserves `state`
-      * Different components at the same position reset `state`
+* `state` is tied to a **position** and **component type** in the tree
+  * **`state` is held inside React instead of "living" inside the component**
+  * React preserves a component’s `state` for as long as it’s being rendered at its position in the UI tree. If it gets removed, or a different component gets rendered at the same position, React discards its `state`
+  * **It's the position in the UI tree - not in the JSX markup**
+    * Same components at the same position preserves `state`
+    * Different components at the same position reset `state`
 * `key` can be used to make React distinguish between any components
-  * Keys aren't just for lists
-  * `key` are not globally unique, they only specify the position within the parent
+  * `key` isn't just for lists
+  * `key` is not globally unique, they only specify the position within the parent
+  * Use `key` for **resetting components at the same position**
+  
+    * React will destroy the old component instance if the value of `key` has changed
+    * Unmount and remount the component
 
 ### Context API
 
@@ -765,8 +783,13 @@ Version: 1.0
     * Nested functions inside your components that do things rather than just calculate them
     * Event handlers contain [“side effects”](https://en.wikipedia.org/wiki/Side_effect_(computer_science)) (they change the program’s state) caused by a specific user action
   * Sometimes it isn't enough
+  
 * `effects` let you specify side effects are **caused by rendering itself, or father components' `state` change (*which is, essentially, re-rendering itself*), rather than by a particular event**
+
+  > *For example, a `state` change in the event handler of a component can cause some side effects that need to be handled in the `useEffect` inside the child component*
+
 * `effects` run at the end of a [commit](#render-and-commit) after the screen updates. This is a good time to synchronize the React components with some **external system** (like network or a third-party library or browser APIs)
+
 * A potential problem with `effects` and `setState`: an infinte loop
   * `effect` execute after rendering, `setState` inside `effect` re-trigger the rendering
   * Solution: set up dependencies
@@ -828,11 +851,6 @@ Version: 1.0
        }, []);
      ```
 
-* Use `key` for resetting components
-
-  * React will destroy the old component instance if the value of `key` has changed
-  * Unmount and remount the component
-
 * How to handle React remount the component twice in development
 
   * Controlling non-React widgets
@@ -858,3 +876,43 @@ Version: 1.0
 * Functions starting with `use`
 * Can only be called at the top level of your components or your own Hooks
 
+### [`useCallback()`](https://react.dev/reference/react/useCallback)
+
+* Let you cache a function definition between re-renders
+
+  ```react
+  const cachedFn = useCallback(fn, dependencies);
+  ```
+
+* Return
+
+  * On the initial render, `useCallback` returns the `fn` function you have passed
+  * During subsequent renders, it will either return an already stored `fn`  function from the last render (if the dependencies haven’t changed), or return the `fn` function you have passed during this render
+
+* Usage
+
+  * You pass it as a prop to a component wrapped in `memo()`. You want to skip re-rendering if the value hasn’t changed. Memoization lets your component re-render only if dependencies changed
+  * The function you’re passing is later used as a dependency of some Hook. For example, another function wrapped in `useCallback()` depends on it, or you depend on this function from `useEffect()`
+
+### [`useMemo()`](https://react.dev/reference/react/useMemo)
+
+* Let you cache the result of a calculation between re-renders
+
+  ```react
+  const cachedValue = useMemo(calcValue, dependencies);
+  ```
+
+* Parameters
+
+  * `calculateValue`: **The function calculating the value** that you want to cache. It should be pure, should take no arguments, and should return a value of any type. React will call your function during the initial render. On next renders, React will return the same value again if the `dependencies` have not changed since the last render. Otherwise, it will call `calculateValue`, return its result, and store it so it can be reused later
+
+* Return
+
+  * On the initial render, `useMemo` returns the result of calling `calculateValue` with no arguments 
+  * During next renders, it will either return an already stored value from the last render (if the dependencies haven’t changed), or call `calculateValue` again, and return the result that `calculateValue` has returned
+
+* Usage
+
+  * **You should only rely on `useMemo()` as a performance optimization**
+  * Skipping expensive recalculations
+  * 
