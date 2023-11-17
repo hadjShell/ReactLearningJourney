@@ -660,51 +660,6 @@ Version: 1.0
 
 ***
 
-## Styling React Components
-
-### Styling with vanilla CSS
-
-* Import CSS file into corresponding JSX file
-* Pros
-  * CSS code is decoupled from JSX code
-* Cons
-  * You need to know CSS
-  * **CSS is not scoped to components**, CSS rules may clash across components
-
-### Scoping Styles
-
-* Use inline `style` attribute 
-  * The value is an object, not a string
-* Use CSS modules
-  * Change `Component.css` to `Component.module.css`
-  * Change `import "./Component.css"` to `import classes from "./Component.module.css"`
-  * `<p className={classes.paragraph}>test</p>`
-* CSS-IN-JS Styling with "Styled Components"
-  * Use a package [Styled components](https://styled-components.com/) 
-
-
-### Styling with Tailwind CSS
-
-* The main idea of Tailwind: add tiny utility CSS classes to HTML elements
-* [Tailwind website](https://tailwindcss.com/)
-
-### Dynamic Styling
-
-* Dynamic inline styling
-* Dynamic styling by add class name to component dynamically, using template literal
-
-***
-
-## Debugging React Apps
-
-* Error messages
-* Browser debugger
-* "strict mode"
-  * A React component `StrictMode` as an wrapper for other components
-* React DevTools
-
-***
-
 ## `refs`
 
 ### What is `refs`
@@ -915,4 +870,141 @@ Version: 1.0
 
   * **You should only rely on `useMemo()` as a performance optimization**
   * Skipping expensive recalculations
-  * 
+
+***
+
+## Styling React Components
+
+### Styling with vanilla CSS
+
+* Import CSS file into corresponding JSX file
+* Pros
+  * CSS code is decoupled from JSX code
+* Cons
+  * You need to know CSS
+  * **CSS is not scoped to components**, CSS rules may clash across components
+
+### Scoping Styles
+
+* Use inline `style` attribute 
+  * The value is an object, not a string
+* Use CSS modules
+  * Change `Component.css` to `Component.module.css`
+  * Change `import "./Component.css"` to `import classes from "./Component.module.css"`
+  * `<p className={classes.paragraph}>test</p>`
+* CSS-IN-JS Styling with "Styled Components"
+  * Use a package [Styled components](https://styled-components.com/) 
+
+
+### Styling with Tailwind CSS
+
+* The main idea of Tailwind: add tiny utility CSS classes to HTML elements
+* [Tailwind website](https://tailwindcss.com/)
+
+### Dynamic Styling
+
+* Dynamic inline styling
+* Dynamic styling by add class name to component dynamically, using template literal
+
+***
+
+## Debugging React Apps
+
+* Error messages
+* Browser debugger
+* "strict mode"
+  * A React component `StrictMode` as an wrapper for other components
+* React DevTools
+
+***
+
+## Class-Based Components
+
+### What & Why
+
+* Functional component is the default and most modern approach
+* Traditionally, which means before React 16.8, you had to use class-based components to manage `state` 
+* React 16.8 introduced *React Hooks* for functional components
+* Class-based components **CAN'T** use React Hooks
+
+### Working with Class-Based Components
+
+```react
+import { Component } from 'react';
+
+class User extends Component {
+  static contextType = UsersContext;
+  // pitfall: can only link to one context
+  
+  constructor() {
+    super();
+    // For class-based component, state is always an object
+    // And it also has to be a property named "state"
+    this.state = {
+      showUsers: true,
+      more: "test",
+    };
+  }
+  
+  toggleUsersHandler() {
+    // React will merge the new state object with the old one
+    // this.setState({showUsers: false});
+    this.setStae((curState) => {return {showUsers: !curState.showUsers};});
+  }
+  
+  render() {
+    const usersList = (
+      <ul>
+      	{this.context.users.map(user => <User key={user.id} name={user.name} />)}
+      </ul>
+    );
+    
+    return (
+      <div className={classes.user}>
+        <button onClick={this.toggleUsersHandler.bind(this)}>
+        	{this.state.showUsers ? "Hide" : "Show"} Users
+        </button>
+        {this.state.showUsers && usersList}
+      </div>
+  	);
+  }
+}
+
+// Component lifecycle methods
+// A more imperative way, you have to add if block to specify when you want to skip the execution
+componentDidMount() === useEffect(fn, []);							// Called once a component mounted
+componentDidUpdate() === useEffect(fn, [someValue]);		// Called once a component updated
+componentWillUnmount() === //cleanup function						// Called once a component unmounted
+```
+
+### Error Boundaries
+
+* Right now (Nov 17 2023) this feature can only be used in class-based component
+
+* An error generated inside a component cannot be handled inside it, it should be treated as an information, and be catched and handled in the parent component
+
+* ```react
+  import { Component } from 'react';
+  
+  // Wrap this error handler component around components should be protected by it
+  export default class ErrorBoundary extends Component {
+    constructor() {
+      super();
+      this.state = {hasError: false};
+    }
+    
+    componentDidCatch(error) {
+      this.setState({hasError: true});
+    }
+    
+    render() {
+      if(hasError)
+        return <p>"Something went wrong!"</p>;
+      
+      return this.props.children
+    }
+  }
+  ```
+
+***
+
