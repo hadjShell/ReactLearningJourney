@@ -871,6 +871,10 @@ Version: 1.0
   * **You should only rely on `useMemo()` as a performance optimization**
   * Skipping expensive recalculations
 
+### Custom Hooks
+
+
+
 ***
 
 ## Styling React Components
@@ -1007,4 +1011,69 @@ componentWillUnmount() === //cleanup function						// Called once a component un
   ```
 
 ***
+
+## Handling HTTP Request
+
+### How to Connect a Back-end / Database
+
+* Not all operations can be performed in the browser
+  * Cannot connect to a database directly
+  * Cannot access a file system
+  * Etc.
+* Browser <-> Back Server <-> Database via HTTP
+
+### Fetching Data
+
+* `useEffect()` + `fetch()`
+* Handle loading status
+* Handle HTTP errors
+* Outsource `AJAX` helper function
+
+```react
+useEffect(() => {
+  (async function () {
+    setIsFetching(true);
+    try {
+      const response = await fetch("http://localhost:3000/places");
+    	if(!response.ok) {
+      	throw new Error(`💥 Failed to fetch data! ${response.status}`);
+    	}
+      const data = await response.json();
+      setPlaces(data.places);
+    } catch(err) {
+      setError(true);
+      console.error(error.message);
+    }
+    setIsFetching(false);
+  })();
+}, []);
+```
+
+### Sending Data
+
+```react
+export async function updateUserPlaces(places) {
+  const response = await fetch("http://localhost:3000/user-places", {
+    method: "PUT",
+    body: JSON.stringify({ places  }),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+  const data = await response.json();
+  
+  if(!response.ok)	throw new Error("Failed to update user data!");
+  
+  return data.message;
+}
+```
+
+* Handler functions can be `async`
+* Optimistic updating
+  * Change the UI immediately before sending data behind the screen
+  * Rollback the change if HTTP request fail
+
+***
+
+
 
