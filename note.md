@@ -278,8 +278,6 @@ Version: 1.0
 
   * Refactor your project to a clever structure
 
-
-
 ### Queueing a series of `state` updates
 
 * Batching
@@ -365,8 +363,6 @@ Version: 1.0
 * Connect the event handlers to `setState`
 
   >  Components wrap controller and view together, but make them much easier to code and much less fragile
-
-* Two-way binding for updating inputs
 
 ### Principle for structuring `state`
 
@@ -743,7 +739,7 @@ Version: 1.0
 
   > *For example, a `state` change in the event handler of a component can cause some side effects that need to be handled in the `useEffect` inside the child component*
 
-* `effects` run at the end of a [commit](#render-and-commit) after the screen updates. This is a good time to synchronize the React components with some **external system** (like network or a third-party library or browser APIs)
+* `effects` run **at the end of a [commit](#render-and-commit) after the screen updates**. This is a good time to synchronize the React components with some **external system** (like network or a third-party library or browser APIs)
 
 * A potential problem with `effects` and `setState`: an infinte loop
   * `effect` execute after rendering, `setState` inside `effect` re-trigger the rendering
@@ -828,8 +824,10 @@ Version: 1.0
 
 ## React Hooks
 
+* **Hooks are functions that let you "hook into" React state and lifecycle features from function components**
 * Functions starting with `use`
 * Can only be called at the top level of your components or your own Hooks
+* Can only call Hooks on the top level
 
 ### [`useCallback()`](https://react.dev/reference/react/useCallback)
 
@@ -873,6 +871,17 @@ Version: 1.0
 
 ### Custom Hooks
 
+* Share logic between components
+* Hook names always start with `use`
+* Custom hooks let you share stateful logic, not `state` itself; each call to a Hook is completely independent from every other call to the same Hook
+* When to use custom hook
+  * With time, most of your app's `effect` will be in custom Hooks
+    * You make the data flow to and from your Effects very explicit
+    * You let your components focus on the intent rather than on the exact implementation of your Effects
+    * When React adds new features, you can remove those Effects without changing any of your components
+
+  * Keep custom Hooks focused on concrete high-level use cases
+  * A good custom Hook makes the calling code more declarative by constraining what it does
 
 
 ***
@@ -1074,6 +1083,68 @@ export async function updateUserPlaces(places) {
   * Rollback the change if HTTP request fail
 
 ***
+
+## Working with Forms & User Input
+
+### What is Form
+
+* [HTML Forms](https://www.w3schools.com/html/html_forms.asp)
+* The `for` attribute of the `<label>` tag should be equal to the `id` attribute of the `<input>` element to bind them together
+  * In JSX it's named `htmlFor`
+* Each input field must have a `name` attribute to be submitted. If the `name` attribute is omitted, the value of the input field will not be sent at all
+* Validating user input is the trickier part
+
+### Handling Form Submission
+
+* Form submission
+
+  * By default, the browser sends a HTTP request to the server when a button inside `form` has been clicked; therefore, the page will reload
+  * This can be a problem when there is no handler for this request on the server (React app)
+  * Solution
+    * `<button type="button"></button>`
+    * Refactor from `<button onClick={handler}></button>` to `<form onSubmit={handler}></form>` + `e.preventDefault()`
+      * Suggested way
+
+* Getting user input via `state`
+
+  * Two-way binding for updating inputs: `onChange={handler}` + `setState(e.targer.value)`
+  * Make it generic by creating object `state` and refactoring to one handler `handlerInputChange(identifier, e)`
+
+* Getting user input via `ref`
+
+  * Link `refs` to `input` elements
+  * Have to use `ref` to manipulate DOM directly which is not recommended
+  * Cannot bundle `refs` into one object
+
+* Getting user input via `FormData` & native Browser APIs
+
+  * Useful for handling form that has lots of inputs
+  * Example
+
+  ```react
+  function handleSubmit(e) {
+    e.preventDefault();
+    
+    const fd = new FormData(e.target);
+    const acquisition = fd.getAll("acquisition");			// get all values asscoiated with a given input name
+    const data = Object.fromEntries(fd.entries());
+    data.acquisition = acquisition;
+  }
+  ```
+
+* Resetting Form
+
+  * `<button type="reset">Reset</button>`; or,
+  * Reset `state`; or,
+  * `ref.current.value = ""`; or,
+  * `e.target.reset()`
+    * `e.target` is the form element
+
+### Validating User Input
+
+### Using Built-in Form Features
+
+### Building Custom Solutions
 
 
 
