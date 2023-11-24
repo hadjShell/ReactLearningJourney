@@ -1,6 +1,13 @@
+import { useState, useContext } from "react";
+import { OrdersContext } from "../contexts/OrdersContext";
 import logo from "../assets/logo.jpg";
+import Button from "./Button";
+import Cart from "./Cart";
 
 export default function Header() {
+  const [openCart, setOpenCart] = useState(false);
+  const { orders } = useContext(OrdersContext);
+
   return (
     <div id="main-header">
       <section id="title">
@@ -8,7 +15,11 @@ export default function Header() {
         <h1>REACTFOOD</h1>
       </section>
 
-      <button>Cart</button>
+      <Button type="text-button" onClick={() => setOpenCart(true)}>
+        Cart ({orders.length})
+      </Button>
+
+      <Cart open={openCart} setOpen={setOpenCart}></Cart>
     </div>
   );
 }
