@@ -1142,9 +1142,26 @@ export async function updateUserPlaces(places) {
 
 ### Validating User Input
 
-### Using Built-in Form Features
+* Compute the `isValid` logic and render conditionally
+* Always add `onSubmit` validation
+* Validating input on every key stoke via `state`
+  * Errors may be shown too early
+* Validating input upon lost focus
+  * `OnBlue={handleInputBlur}`
+  * Errors may not disappear when the user starts to type again
+
+> Combining validating on key stoke and lost focus is a good pattern
+
+* Validating input upon form submission
+* Validating input via built-in validation `props`
+  * `type`, `required`, etc.
+
+> Combining custom and built-in validation logic is also a good pattern
 
 ### Building Custom Solutions
 
-
+* Custom `Input` Component
+* Custom `useInput` Hook
+* Outsource validation logic
+* Use third-party form libraries
 
