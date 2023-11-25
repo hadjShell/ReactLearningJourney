@@ -340,6 +340,13 @@ Version: 1.0
     * Run `npm install use-immer` to add Immer as a dependency
     * Then replace `import { useState } from 'react'` with `import { useImmer } from 'use-immer'`
 
+### Component Lifecycle
+
+- A component *mounts* when it’s added to the screen
+- A component *updates* when it receives new `props` or `state`, usually in response to an interaction
+- A component *unmounts* when it’s removed from the screen
+- All values declare in the component body are reactive
+
 
 ***
 
@@ -738,12 +745,12 @@ Version: 1.0
 * `effects` let you specify side effects are **caused by rendering itself, or father components' `state` change (*which is, essentially, re-rendering itself*), rather than by a particular event**
 
   > *For example, a `state` change in the event handler of a component can cause some side effects that need to be handled in the `useEffect` inside the child component*
+  >
+  > Logic inside event handlers is **not reactive**
+  >
+  > Logic inside Effects is **reactive**
 
 * `effects` run **at the end of a [commit](#render-and-commit) after the screen updates**. This is a good time to synchronize the React components with some **external system** (like network or a third-party library or browser APIs)
-
-* A potential problem with `effects` and `setState`: an infinte loop
-  * `effect` execute after rendering, `setState` inside `effect` re-trigger the rendering
-  * Solution: set up dependencies
 
 ### `effects` & `dependencies`
 
@@ -785,6 +792,11 @@ Version: 1.0
          * `effect` execute even if the dependencies are logically equivalent (*with different pointers*)
          * **`useCallback`** to solve this problem
            * Wrap the function dependencies in the `useCallback()`
+         * Or, try to avoid them
+     *  Mutable values (including global variables) aren’t reactive, so they shouldn't be dependencies
+        *  A mutable value like `location.pathname` can’t be a dependency
+        *  A mutable value like `ref.current` or things you read from it also can’t be a dependency
+        *  `ref` can be listed in dependencies but no point to do it because it's never changed
 
   3. Add cleanup if needed
 
@@ -802,6 +814,11 @@ Version: 1.0
        }, []);
      ```
 
+* A potential problem with `effects` and `setState`: an infinte loop
+
+  * `effect` execute after rendering, `setState` inside `effect` re-trigger the rendering
+  * Solution: remove `state` from dependencies and pass updater function to `setState` in `useEffect()`
+  
 * How to handle React remount the component twice in development
 
   * Controlling non-React widgets
@@ -815,7 +832,7 @@ Version: 1.0
 ### When NOT to use `useEffect()`
 
 * Some logic should only run once when the application starts. You can put it outside your components
-  * Those codes wil execute once the first time the file is imported
+  * **Those codes wil execute once the first time the file is imported**
 * Updating state based on `props` and `state`
   * Calculate the value inside the component
 * 
