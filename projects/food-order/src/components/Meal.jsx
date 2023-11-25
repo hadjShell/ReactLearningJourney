@@ -3,17 +3,22 @@ import { useContext } from "react";
 import { OrdersContext } from "../contexts/OrdersContext";
 
 export default function Meal({ id, image, name, price, description }) {
-  const { setOrders } = useContext(OrdersContext);
+  const { orders, setOrders } = useContext(OrdersContext);
 
   function handleOrder() {
-    setOrders(prevOrders => {
-      prevOrders.push({
-        id,
-        name,
-        price,
-        number: 1,
-      });
-    });
+    const hasOrder = orders.find(o => o.id === id);
+    !hasOrder
+      ? setOrders(prevOrders => {
+          prevOrders.push({
+            id,
+            name,
+            price,
+            number: 1,
+          });
+        })
+      : setOrders(prevOrders => {
+          prevOrders.find(o => o.id === id).number++;
+        });
   }
 
   return (

@@ -9,7 +9,7 @@ export default function Header() {
   const { orders } = useContext(OrdersContext);
 
   return (
-    <div id="main-header">
+    <header id="main-header">
       <section id="title">
         <img src={logo} alt="Logo"></img>
         <h1>REACTFOOD</h1>
@@ -20,6 +20,6 @@ export default function Header() {
       </Button>
 
       <Cart open={openCart} setOpen={setOpenCart}></Cart>
-    </div>
+    </header>
   );
 }
