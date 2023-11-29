@@ -1,5 +1,6 @@
 import { OrdersContext } from "../contexts/OrdersContext";
 import { useContext } from "react";
+import { currencyFormatter } from "../utils/formatter";
 
 export default function Orders() {
   const { orders, setOrders } = useContext(OrdersContext);
@@ -36,7 +37,9 @@ export default function Orders() {
         ))}
       </ul>
       <p className="cart-total">
-        {"$" + orders.reduce((sum, o) => sum + Number(o.price) * o.number, 0)}
+        {currencyFormatter.format(
+          orders.reduce((sum, o) => sum + Number(o.price) * o.number, 0)
+        )}
       </p>
     </>
   );

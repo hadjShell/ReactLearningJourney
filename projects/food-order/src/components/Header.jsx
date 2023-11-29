@@ -1,11 +1,13 @@
-import { useState, useContext } from "react";
+import { useContext } from "react";
 import { OrdersContext } from "../contexts/OrdersContext";
+import { ModalOpenContext } from "../contexts/ModalOpenContext";
 import logo from "../assets/logo.jpg";
-import Button from "./Button";
+import Button from "./UI/Button";
 import Cart from "./Cart";
+import Checkout from "./Checkout";
 
 export default function Header() {
-  const [openCart, setOpenCart] = useState(false);
+  const { setOpen } = useContext(ModalOpenContext);
   const { orders } = useContext(OrdersContext);
 
   return (
@@ -15,11 +17,19 @@ export default function Header() {
         <h1>REACTFOOD</h1>
       </section>
 
-      <Button type="text-button" onClick={() => setOpenCart(true)}>
-        Cart ({orders.length})
+      <Button
+        style="text-button"
+        onClick={() =>
+          setOpen(o => {
+            o.cart = true;
+          })
+        }
+      >
+        Cart ({orders.reduce((num, o) => num + o.number, 0)})
       </Button>
 
-      <Cart open={openCart} setOpen={setOpenCart}></Cart>
+      <Cart></Cart>
+      <Checkout></Checkout>
     </header>
   );
 }

@@ -1,12 +1,17 @@
 import Meal from "./Meal";
-import useFetchData from "../hooks/useFetchData";
+import Error from "./UI/Error";
+import useHttp from "../hooks/useHttp";
+
+const config = {
+  method: "GET",
+};
 
 export default function Meals() {
   const {
     data: meals,
-    error,
     isFetching,
-  } = useFetchData("http://localhost:3000/meals");
+    error,
+  } = useHttp("http://localhost:8080/meals", config, []);
 
   return (
     <div id="meals">
@@ -24,7 +29,7 @@ export default function Meals() {
           ></Meal>
         ))
       ) : (
-        <p>{error}</p>
+        <Error message={error}></Error>
       )}
     </div>
   );

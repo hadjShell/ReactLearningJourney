@@ -32,6 +32,7 @@ export default function Dialog({
       ref={ref}
       className={classes}
       onClick={handleClickOutsideDialog}
+      onClose={() => setOpen(false)}
       {...props}
     >
       {children}

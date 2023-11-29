@@ -1,17 +1,17 @@
 import Header from "./components/Header";
 import Meals from "./components/Meals";
-import { useImmer } from "use-immer";
-import { OrdersContext } from "./contexts/OrdersContext";
+import { OrdersContextProvider } from "./contexts/OrdersContext";
+import { ModalOpenContextProvider } from "./contexts/ModalOpenContext";
 
 function App() {
-  const [orders, setOrders] = useImmer([]);
-
   return (
     <>
-      <OrdersContext.Provider value={{ orders, setOrders }}>
-        <Header></Header>
+      <OrdersContextProvider>
+        <ModalOpenContextProvider>
+          <Header></Header>
+        </ModalOpenContextProvider>
         <Meals></Meals>
-      </OrdersContext.Provider>
+      </OrdersContextProvider>
     </>
   );
 }

@@ -1,19 +1,53 @@
-import Dialog from "./Dialog";
-import Button from "./Button";
+import Dialog from "./UI/Dialog";
+import Button from "./UI/Button";
 import Orders from "./Orders";
+import { useContext } from "react";
+import { ModalOpenContext } from "../contexts/ModalOpenContext";
+import { OrdersContext } from "../contexts/OrdersContext";
 
-export default function Cart({ open, setOpen }) {
+export default function Cart() {
+  const { open, setOpen } = useContext(ModalOpenContext);
+  const { orders } = useContext(OrdersContext);
+
   return (
-    <Dialog open={open} setOpen={setOpen} className="cart">
+    <Dialog
+      open={open.cart}
+      setOpen={state =>
+        setOpen(o => {
+          o.cart = state;
+        })
+      }
+      className="cart"
+      id="cart"
+    >
       <h2>Your Cart</h2>
 
       <Orders></Orders>
 
       <div className="modal-actions">
-        <Button type="text-button" onClick={() => setOpen(false)}>
+        <Button
+          style="text-button"
+          onClick={() =>
+            setOpen(o => {
+              o.cart = false;
+            })
+          }
+        >
           Close
         </Button>
-        <Button type="button">Go to Checkout</Button>
+        {orders.length !== 0 && (
+          <Button
+            style="button"
+            onClick={() =>
+              setOpen(o => {
+                o.cart = false;
+                o.checkout = true;
+              })
+            }
+          >
+            Go to Checkout
+          </Button>
+        )}
       </div>
     </Dialog>
   );

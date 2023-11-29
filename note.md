@@ -1029,7 +1029,7 @@ componentWillUnmount() === //cleanup function						// Called once a component un
     
     render() {
       if(hasError)
-        return <p>"Something went wrong!"</p>;
+        return <p>Something went wrong!</p>;
       
       return this.props.children
     }
@@ -1081,7 +1081,7 @@ useEffect(() => {
 export async function updateUserPlaces(places) {
   const response = await fetch("http://localhost:3000/user-places", {
     method: "PUT",
-    body: JSON.stringify({ places  }),
+    body: JSON.stringify({ places }),
     headers: {
       "Content-Type": "application/json"
     }

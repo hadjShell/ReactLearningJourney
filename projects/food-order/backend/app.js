@@ -10,7 +10,7 @@ app.use(express.static("public"));
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST");
+  res.setHeader("Access-Control-Allow-Methods", "*");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   next();
 });
@@ -23,11 +23,7 @@ app.get("/meals", async (req, res) => {
 app.post("/orders", async (req, res) => {
   const orderData = req.body.order;
 
-  if (
-    orderData === null ||
-    orderData.items === null ||
-    orderData.items === []
-  ) {
+  if (orderData === null || orderData.items === null) {
     return res.status(400).json({ message: "Missing data." });
   }
 
@@ -68,4 +64,4 @@ app.use((req, res) => {
   res.status(404).json({ message: "Not found" });
 });
 
-app.listen(3000);
+app.listen(8080);
