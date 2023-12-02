@@ -1190,6 +1190,8 @@ export async function updateUserPlaces(places) {
 
 * Redux is a state management system for *cross-component* or *app-wide* state
 
+* Redux can be used anywhere without React
+
 * Core concept of Redux
 
   ![Redux-Concept](img/Redux-Concept.png)
@@ -1477,3 +1479,10 @@ ReactDOM.render(
   - The store notifies all parts of the UI that are subscribed that the store has been updated
   - Each UI component that needs data from the store checks to see if the parts of the state they need have changed.
   - Each component that sees its data has changed forces a re-render with the new data, so it can update what's shown on the screen
+
+***
+
+## References
+
+* [React Tutorial](https://react.dev/learn)
+* [Redux Tutorial](https://redux.js.org/introduction/getting-started)
