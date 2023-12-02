@@ -1053,7 +1053,7 @@ componentWillUnmount() === //cleanup function						// Called once a component un
 * `useEffect()` + `fetch()`
 * Handle loading status
 * Handle HTTP errors
-* Outsource `AJAX` helper function
+* Outsource `AJAX(url, config, initialData)` helper function
 
 ```react
 useEffect(() => {
@@ -1182,3 +1182,298 @@ export async function updateUserPlaces(places) {
 * Outsource validation logic
 * Use third-party form libraries
 
+***
+
+## Redux
+
+### What is Redux
+
+* Redux is a state management system for *cross-component* or *app-wide* state
+
+* Core concept of Redux
+
+  ![Redux-Concept](img/Redux-Concept.png)
+
+* Redux Toolkit
+
+  * [**Redux Toolkit**](https://redux-toolkit.js.org/) (also known as **"RTK"** for short) is our official recommended approach for writing Redux logic
+
+  * The `@reduxjs/toolkit` package wraps around the core `redux` package, and contains API methods and common dependencies that are essential for building a Redux app
+
+  * **If you are writing any Redux logic today, you should be using Redux Toolkit to write that code!**
+
+### Why using Redux
+
+* Potential problems of `context`
+  * Deeply nested components
+  * Complex providers
+  * Performance issue from high-frequency changes
+* **Redux is most useful in cases when**:
+  - You have large amounts of application state that are needed in many places in the app
+  - The app state is updated frequently
+  - The logic to update that state may be complex
+  - The app has a medium or large-sized codebase, and might be worked on by many people
+  - You need to see how that state is being updated over time
+* [When(and when not) to reach for Redux by Mark Erikson](https://changelog.com/posts/when-and-when-not-to-reach-for-redux)
+* In a nutshell, use the tool when you need it
+
+### How to use Redux
+
+#### Redux Core
+
+* **Store**
+
+  * The current Redux application state lives in an object called **store**
+
+    ```javascript
+    const redux = require("redux");
+    const store = redux.createStore(counterReducer)
+    
+    console.log(store.getState())
+    // {value: 0}
+    ```
+
+* **Subscriber**
+
+  ```react
+  const state = store.getState();
+  store.subscribe(render);
+  ```
+
+* **Selector**
+
+  ```react
+  const selectCounterValue = state => state.value
+  const currentValue = selectCounterValue(store.getState())
+  ```
+
+* **Dispatch**
+
+  * The Redux `store` has a method called `dispatch`
+
+  * **The only way to update the `state` is to call store.dispatch(action)**
+
+  * The `store` will run its `slice reducer` function and save the new `state` value inside
+
+    ```react
+    store.dispatch({ type: 'counter/increment' })
+    ```
+
+  * Typically we call `actionCreator` to dispatch the right `action`
+
+    ```react
+    const increment = () => {
+      return {
+        type: 'counter/increment'
+      }
+    }
+    
+    store.dispatch(increment())
+    
+    console.log(store.getState())
+    // {value: 1}
+    ```
+
+* **Reducer**
+
+  * Reducer is a function that receives the current `state` and an `action` object, decide how to update the `state` id necessary, and return the new `state`
+
+  * **You can think of a `reducer` as an event listener which handles events based on the received action (event) type**
+
+  * Reducer should be a pure function
+
+    * They must not do any asynchronous logic, calculate random values, or cause other "side effects"
+
+  * State should be immutable
+
+    ```react
+    const initialState = { value: 0 }
+    
+    function counterReducer(state = initialState, action) {
+      // Check to see if the reducer cares about this action
+      if (action.type === 'counter/increment') {
+        // If so, make a copy of `state`
+        return {
+          ...state,
+          // and update the copy with the new value
+          value: state.value + 1
+        }
+      }
+      // otherwise return the existing state unchanged
+      return state
+    }
+    ```
+
+* **Action**
+
+  * An `action` is a plain JavaScript object that has a `type` field
+
+  * **You can think of an action as an event that describes something that happened in the application**
+
+  * The `type` field should be a string that gives this action a descriptive name. We usually write that type string like `"domain/eventName"`, where the first part is the feature or category that this action belongs to, and the second part is the specific thing that happened
+
+  * An action object can have other fields with additional information about what happened. By convention, we put that information in a field called `payload`
+
+    ```react
+    const addTodoAction = {
+      type: 'todos/todoAdded',
+      payload: 'Buy milk'
+    }
+    ```
+
+* **Action Creators**
+
+  * An action creator is a function that creates and return `action` object
+
+  * It is typically used so we don't have to write the `action` object by hand everytime
+
+    ```react
+    const addTodo = text => {
+      return {
+        type: 'todos/todoAdded',
+        payload: text
+      }
+    }
+    ```
+
+#### **React-Redux Application Contents (Modern way)**
+
+* Redux allows `store` setup to be customised with different plugins (`middleware` and `enhancers`)
+
+```react
+// store.js
+import { configureStore } from '@reduxjs/toolkit'
+import counterReducer from '../features/counter/counterSlice'
+
+export default configureStore({
+  // root reducer
+  reducer: {
+    // slice reducer
+    counter: counterReducer
+  }
+})
+// When we pass in an object like {counter: counterReducer}, that says that 
+// we want to have a state.counter section of our Redux state object, and that 
+// we want the counterReducer function to be in charge of deciding if and 
+// how to update the state.counter section whenever an action is dispatched.
+```
+
+* **A "redux slice" is a collection of Redux reducer logic and actions for a single feature in your app**, typically defined together in a single file. The name comes from splitting up the root Redux state object into multiple "slices" of state
+
+```react
+// counterSlice.js
+import { createSlice } from '@reduxjs/toolkit'
+
+export const counterSlice = createSlice({
+  name: 'counter',
+  initialState: {
+    value: 0
+  },
+  reducers: {
+    increment: state => {
+      // Redux Toolkit allows us to write "mutating" logic in reducers. It
+      // doesn't actually mutate the state because it uses the immer library,
+      // which detects changes to a "draft state" and produces a brand new
+      // immutable state based off those changes
+      state.value += 1
+    },
+    decrement: state => {
+      state.value -= 1
+    },
+    incrementByAmount: (state, action) => {
+      state.value += action.payload
+    }
+  }
+})
+
+// action creators
+export const { increment, decrement, incrementByAmount } = counterSlice.actions
+
+// reducer function
+export default counterSlice.reducer
+
+// selector
+export const selectCount = state => state.counter.value
+```
+
+* The `React-Redux` library has a set of custom Hooks that allow your React component to interact with a Redux `store`
+* React components can't talk to the Redux `store` directly, because we're not allowed to import it into component files
+
+```react
+// Counter.jsx
+import React, { useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import {
+  decrement,
+  increment,
+  incrementByAmount,
+  incrementAsync,
+  selectCount
+} from './counterSlice'
+import styles from './Counter.module.css'
+
+export function Counter() {
+  // Reading data with useSelector
+  const count = useSelector(selectCount)
+  // Dispatch actions
+  const dispatch = useDispatch()
+  const [incrementAmount, setIncrementAmount] = useState('2')
+
+  return (
+    <div>
+      <div className={styles.row}>
+        <button
+          className={styles.button}
+          aria-label="Increment value"
+          onClick={() => dispatch(increment())}
+        >
+          +
+        </button>
+        <span className={styles.value}>{count}</span>
+        <button
+          className={styles.button}
+          aria-label="Decrement value"
+          onClick={() => dispatch(decrement())}
+        >
+          -
+        </button>
+      </div>
+      {/* omit additional rendering output here */}
+    </div>
+  )
+}
+```
+
+* Providing the `store`
+
+```react
+// index.js or main.jsx
+import React from 'react'
+import ReactDOM from 'react-dom'
+import './index.css'
+import App from './App'
+import store from './app/store'
+import { Provider } from 'react-redux'
+
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root')
+)
+```
+
+### Redux application data flow
+
+* Redux data flow is one-way
+* Initial setup:
+  - A Redux store is created using a root reducer function
+  - The store calls the root reducer once, and saves the return value as its initial `state`
+  - When the UI is first rendered, UI components access the current state of the Redux store, and use that data to decide what to render. They also subscribe to any future store updates so they can know if the state has changed.
+* Updates:
+  - Something happens in the app, such as a user clicking a button
+  - The app code dispatches an action to the Redux store, like `dispatch({type: 'counter/increment'})`
+  - The store runs the reducer function again with the previous `state` and the current `action`, and saves the return value as the new `state`
+  - The store notifies all parts of the UI that are subscribed that the store has been updated
+  - Each UI component that needs data from the store checks to see if the parts of the state they need have changed.
+  - Each component that sees its data has changed forces a re-render with the new data, so it can update what's shown on the screen
