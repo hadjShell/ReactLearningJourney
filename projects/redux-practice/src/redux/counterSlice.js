@@ -18,6 +18,11 @@ const counterSlice = createSlice({
 
 // Action creators
 export const { increment, decrement, incrementByAmount } = counterSlice.actions;
+export const incrementAfterThreeSecond = () => dispatch => {
+  setTimeout(() => {
+    dispatch(increment());
+  }, 3 * 1000);
+};
 
 // Slice reducer function
 export default counterSlice.reducer;

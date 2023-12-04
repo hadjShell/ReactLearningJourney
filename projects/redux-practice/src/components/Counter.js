@@ -4,6 +4,7 @@ import {
   increment,
   decrement,
   incrementByAmount,
+  incrementAfterThreeSecond,
   selectCount,
 } from "../redux/counterSlice";
 import { useState } from "react";
@@ -21,6 +22,9 @@ const Counter = () => {
       <button onClick={() => dispatch(decrement())}>Decrement</button>
       <button onClick={() => dispatch(incrementByAmount(incrementer))}>
         Increment by amount
+      </button>
+      <button onClick={() => dispatch(incrementAfterThreeSecond())}>
+        Increment after 3 second
       </button>
       <div>
         <p>Amount: </p>

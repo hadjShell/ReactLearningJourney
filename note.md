@@ -817,7 +817,7 @@ Version: 1.0
 * A potential problem with `effects` and `setState`: an infinte loop
 
   * `effect` execute after rendering, `setState` inside `effect` re-trigger the rendering
-  * Solution: remove `state` from dependencies and pass updater function to `setState` in `useEffect()`
+    * Solution: remove `state` from dependencies and pass updater function to `setState` in `useEffect()`
   
 * How to handle React remount the component twice in development
 
@@ -1282,11 +1282,11 @@ export async function updateUserPlaces(places) {
 
   * **You can think of a `reducer` as an event listener which handles events based on the received action (event) type**
 
-  * Reducer should be a pure function
+  * Reducer should be a **pure function**
 
     * They must not do any asynchronous logic, calculate random values, or cause other "side effects"
 
-  * State should be immutable
+  * State should be **immutable**
 
     ```react
     const initialState = { value: 0 }
@@ -1439,6 +1439,13 @@ export function Counter() {
         >
           -
         </button>
+        <button
+          className={styles.button}
+          aria-label="Increment value by amount"
+          onClick={() => dispatch(incrementByAmount(incrementAmount))}
+        >
+          -
+        </button>
       </div>
       {/* omit additional rendering output here */}
     </div>
@@ -1464,6 +1471,49 @@ ReactDOM.render(
   document.getElementById('root')
 )
 ```
+
+* Writing async logic
+
+  * Inside `useEffect()`, listening to `state` change
+
+    * A potential problem
+      * `useEffect()` send the initial (i.e. empty) data to our backend and overwrite any data stored there
+      * Use an if block to skip the first execution
+
+  * Using `thunk`
+
+    * `thunk` is a programming term that means *"a piece of code that does some delayed work"*
+    * Using thunks requires the `redux-thunk` middleware to be added to the Redux store as part of its configuration
+    * **A `thunk` function is a function that accept two arguments: Redux `store` `dispatch()` method and `getState()` method**
+    * `thunk` function are not directly called by application code, instead, they are passed to `store.dispatch()`
+    * We normally use custom action creator to generate `thunk` function
+    * A **`thunk action creator`** is a function that may have some arguments, and returns a `thunk` function
+    * **`thunk` gives us a place to put side effects**
+
+    ```react
+    // the outside "thunk creator" function
+    const fetchUserById = userId => {
+      // the inside "thunk function"
+      return async (dispatch, getState) => {
+        try {
+          // make an async call in the thunk
+          const user = await userAPI.fetchById(userId)
+          // dispatch an action when we get the response back
+          dispatch(userLoaded(user))
+        } catch (err) {
+          // If something went wrong, handle it here
+        }
+      }
+    }
+    
+    // use arrow function
+    export const fetchUserById = userId => async dispatch => {
+      const user = await userAPI.fetchById(userId);
+      dispatch(userLoaded(user))
+    }
+    ```
+
+    
 
 ### Redux application data flow
 
