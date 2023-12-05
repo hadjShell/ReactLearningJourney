@@ -1532,7 +1532,203 @@ ReactDOM.render(
 
 ***
 
+## React Router
+
+* Client-side code simply watches url changes and then loads different React components, instead of fetching new html files
+
+* Application content
+
+  1. `npm install react-router-dom`
+
+  2. Adding a router
+
+     ```react
+     // index.js
+     import * as React from "react";
+     import * as ReactDOM from "react-dom/client";
+     import {
+       createBrowserRouter,
+       RouterProvider,
+     } from "react-router-dom";
+     import "./index.css";
+     import HomePage from './pages/Home';
+     import ProductsPage from './pages/Products';
+     
+     const router = createBrowserRouter([
+       { path: "/", element: <HomePage />, },
+       { path: "/products", element: <ProductsPage />, },
+     ]);
+     
+     ReactDOM.createRoot(document.getElementById("root")).render(
+       <React.StrictMode>
+         <RouterProvider router={router} />
+       </React.StrictMode>
+     );
+     ```
+
+     * Due to the decoupling of fetching and rendering in the design of the data APIs, you should create your router outside of the React tree with a statically defined set of routes
+     * [`createBrowserRouter()`](https://reactrouter.com/en/main/routers/create-browser-router)
+
+  3. Navigating between Pages with Links
+
+     * Prevent default behavior that sending request to the server and restart the React application
+
+     ```react
+     // Home.jsx
+     import { Link } from 'react-router-dom';
+     
+     // omitted
+     <Link to={"/products"}>Products</Link>
+     ```
+
+     * [Link](https://reactrouter.com/en/main/components/link)
+
+     * Under the hood, `Link` renders a `<a></a>` elememnt
+
+     * [NavLink](https://reactrouter.com/en/main/components/nav-link)
+
+       ```react
+       <NavLink
+         to="/messages"
+         className={({ isActive, isPending, isTransitioning }) =>
+           [
+             isPending ? "pending" : "",
+             isActive ? "active" : "",
+             isTransitioning ? "transitioning" : "",
+           ].join(" ") 
+          end
+         }
+       >
+         Messages
+       </NavLink>
+       ```
+
+  4. Navigating programmatically
+
+     * [`useNavigate()`](https://reactrouter.com/en/main/hooks/use-navigate)
+
+  5. Nested Routes
+
+     * Wrapper page that wraps other pages
+
+     ```react
+     // Root.js
+     import { Outlet } from 'react-router-dom';
+     
+     export default Root() {
+       return (
+         <>
+         	<Navbar />
+         	<Outlet />
+         </>
+       );
+     }
+     
+     // index.js
+     
+     // omitted
+     const router = createBrowserRouter([
+       { 
+      		path: "/",
+       	element: <Root />,
+         children: [
+           { index: true, element: <HomePage />, },
+       		{ path: "/products", element: <ProductsPage />, },
+         ]
+       }
+     ]);
+     ```
+
+     * Index routes
+       * When a route has children, and you're at the parent route's path, the `<Outlet>` has nothing to render because no children match
+       * You can think of index routes as the default child route to fill in that space
+
+  6. Dynamic Routes
+
+     ```react
+     // index.js
+     
+     // omitted
+     const router = createBrowserRouter([
+       { 
+      		path: "/",
+       	element: <Root />,
+         children: [
+           { index: true, element: <HomePage />, },
+       		{ path: "products", element: <ProductsPage />, },
+           { path: "products/:id", element: <ProductDetailPage /> },
+         ]
+       }
+     ]);
+     
+     // ProductDetail.jsx
+     import { useParams } from 'react-router-dom';
+     
+     export default function ProductDetailPage() {
+       const { id } = useParams();
+       
+       return (
+       	<>
+         	<p>{id}</p>
+         </>
+       );
+     }
+     ```
+
+     * Dynamic Segments
+       * If a path segment starts with `:` then it becomes a "dynamic segment"
+       * When the route matches the URL, the dynamic segment will be parsed from the URL and provided as `params` to other router APIs
+     * [`useParams()`](https://reactrouter.com/en/main/hooks/use-params)
+
+  7. Handling error pages
+
+     ```react
+     // Error.jsx
+     import { useRouteError } from "react-router-dom";
+     
+     export default function ErrorPage() {
+       const error = useRouteError();
+       console.error(error);
+     
+       return (
+         <div id="error-page">
+           <h1>Oops!</h1>
+           <p>Sorry, an unexpected error has occurred.</p>
+           <p>
+             <i>{error.statusText || error.message}</i>
+           </p>
+         </div>
+       );
+     }
+     
+     // index.js
+     
+     // omitted
+     const router = createBrowserRouter([
+       {
+         path: "/",
+         element: <Root />,
+         errorElement: <ErrorPage />,
+       }
+     ]);
+     ```
+
+     * 404 NOT FOUND
+
+* Relative & Absolute Paths
+
+  * Absolute path
+    * Path starts with `/`
+    * Describes the location from the root directory
+  * Relative path
+    * Describes the location of a file relative to the current (working) directory `*`
+    * Two dots (`..`) represent moving to a parent directory
+    * The single dot indicates your *current location*
+
+***
+
 ## References
 
 * [React Tutorial](https://react.dev/learn)
 * [Redux Tutorial](https://redux.js.org/introduction/getting-started)
+* [React Router](https://reactrouter.com/en/main)
