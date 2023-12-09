@@ -900,42 +900,6 @@ Version: 1.0
   * Keep custom Hooks focused on concrete high-level use cases
   * A good custom Hook makes the calling code more declarative by constraining what it does
 
-
-***
-
-## Styling React Components
-
-### Styling with vanilla CSS
-
-* Import CSS file into corresponding JSX file
-* Pros
-  * CSS code is decoupled from JSX code
-* Cons
-  * You need to know CSS
-  * **CSS is not scoped to components**, CSS rules may clash across components
-
-### Scoping Styles
-
-* Use inline `style` attribute 
-  * The value is an object, not a string
-* Use CSS modules
-  * Change `Component.css` to `Component.module.css`
-  * Change `import "./Component.css"` to `import classes from "./Component.module.css"`
-  * `<p className={classes.paragraph}>test</p>`
-* CSS-IN-JS Styling with "Styled Components"
-  * Use a package [Styled components](https://styled-components.com/) 
-
-
-### Styling with Tailwind CSS
-
-* The main idea of Tailwind: add tiny utility CSS classes to HTML elements
-* [Tailwind website](https://tailwindcss.com/)
-
-### Dynamic Styling
-
-* Dynamic inline styling
-* Dynamic styling by add class name to component dynamically, using template literal
-
 ***
 
 ## Debugging React Apps
@@ -1514,7 +1478,7 @@ ReactDOM.render(
     ```
 
 
-### Redux application data flow
+### Redux Application Data Flow
 
 * Redux data flow is one-way
 * Initial setup:
@@ -1730,6 +1694,51 @@ ReactDOM.render(
 
 ***
 
+## Styling React Components
+
+### Styling with vanilla CSS
+
+* Import CSS file into corresponding JSX file
+* Pros
+  * CSS code is decoupled from JSX code
+* Cons
+  * You need to know CSS
+  * **CSS is not scoped to components**, CSS rules may clash across components
+
+### Scoping Styles
+
+* Use inline `style` attribute 
+  * The value is an object, not a string
+* Use CSS modules
+  * Change `Component.css` to `Component.module.css`
+  * Change `import "./Component.css"` to `import classes from "./Component.module.css"`
+  * `<p className={classes.paragraph}>test</p>`
+* CSS-IN-JS Styling with "Styled Components"
+  * Use a package [Styled components](https://styled-components.com/) 
+
+
+### Styling with Tailwind CSS
+
+* The main idea of Tailwind: add tiny utility CSS classes to HTML elements
+* [Tailwind website](https://tailwindcss.com/)
+
+### Dynamic Styling
+
+* Dynamic inline styling
+* Dynamic styling by add class name to component dynamically, using template literal
+
+### Animating
+
+* Just CSS
+
+  * `transition`
+
+  * `@keyframes` and `animation`
+
+* Framer Motion
+
+***
+
 ## Deployment
 
 * Deployment steps
@@ -1750,3 +1759,4 @@ ReactDOM.render(
 * [React Tutorial](https://react.dev/learn)
 * [Redux Tutorial](https://redux.js.org/introduction/getting-started)
 * [React Router](https://reactrouter.com/en/main)
+* [Framar Motion](https://www.framer.com/motion/)
