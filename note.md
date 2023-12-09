@@ -1513,7 +1513,6 @@ ReactDOM.render(
     }
     ```
 
-    
 
 ### Redux application data flow
 
@@ -1724,6 +1723,25 @@ ReactDOM.render(
     * Describes the location of a file relative to the current (working) directory `*`
     * Two dots (`..`) represent moving to a parent directory
     * The single dot indicates your *current location*
+
+***
+
+## Authentication
+
+***
+
+## Deployment
+
+* Deployment steps
+  1. Test code
+  2. Optimise code
+  3. Build app
+  4. Upload app
+  5. Configure server
+* Lazy loading
+  * Load certain components only when they are needed instead of ahead of time
+  * Refactor from import at the top to `lazy()`,  `import()`, `<Suspend fallback={}></Suspend>`
+* Client-side routing & server-side routing
 
 ***
 
