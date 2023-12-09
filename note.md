@@ -1739,6 +1739,48 @@ ReactDOM.render(
 
 ***
 
+## Testing
+
+* Manual testing
+
+  * Write code -> Preview -> Improve code -> Repeat
+  * Error-prone
+
+* Automated testing
+
+  * Write code that automatically tests your code
+  * Unit test
+    * Test the individual building blocks in isolation
+  * Integration test
+    * Test the combination of multiple building blocks
+  * End-to-End(E2E) test
+    * Test the complete scenarios / user flows in your app
+
+* Testing tools (popular) for React
+
+  * Tool for running our tests and asserting the results
+    * Jest
+  * Tool for "simulating" our React app
+    * React Testing Library
+
+* How to write a test
+
+  * **A**rrange: set up test data, conditions, and environment
+
+  * **A**ct: run logic that should be tested
+
+  * **A**ssert: compare execution results with ecpected results
+
+  * ```react
+    // Component.test.js
+    describe("Testing suite A", () => {
+      test("Test A", () => {});
+      test("Test B", () => {});
+    });
+    ```
+
+***
+
 ## Deployment
 
 * Deployment steps
