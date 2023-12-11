@@ -10,9 +10,7 @@ Version: 1.0
 
 ## Intro
 
-* This document is based on [Learn React by react.dev](https://react.dev/learn)
-* React is  a JavaScript library for rendering UI
-* React application begins at a "root" component `App.js`
+* React is a JavaScript library for rendering UI
 
 ***
 
@@ -110,18 +108,18 @@ Version: 1.0
     }
     ```
 
-* Pass a component identifier as a value for a `prop` to dynamically render different components inside a component
 
-  * The `prop` should be named with a start of capital letter
-  * The value: default element: string; customised element: `{ComponentName}`
+> **Trick**: Pass a component identifier as a value for a `prop` to dynamically render different components inside a component
+>
+> * That `prop` should be named with a start of capital letter
+> * The value: default element: <Default>; customised element: <ComponentName>
 
 * `props` are **immutable**
-
-  * When a component needs to change its props (for example, in response to a user interaction or new data), it will have to “ask” its parent component to pass it *different `props`*— a new object
+  * When a component needs to change its props (for example, in response to a user interaction or new data), it will have to “ask” its parent component to pass it different `props`— *a new object*
 
 ### Conditional Rendering
 
-* Shortcuts: `<condition> ? <content1> : <content2>`, `<conidtion> && <content>`
+* Shortcuts: `<condition> ? <content1> : <content2>`, `<condition> && <content>`
 
 ### Rendering Lists
 
@@ -136,7 +134,7 @@ Version: 1.0
   * Where to get your `key`
     * Data from a database or API: use their keys
     * Locally generated data: use an incrementing counter [`crypto.randomUUID()`](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID) or a package like [`uuid`](https://www.npmjs.com/package/uuid) when creating items
-  * The components won't receive `key` as a `prop`, it's only used as a hint by React itself
+  * **The components won't receive `key` as a `prop`**, it's only used as a hint by React itself
   
   ```jsx
   export default function List({ people }) {
@@ -165,7 +163,7 @@ Version: 1.0
 
 ## Interactivity
 
-### Responding to Events
+### Event Handlers
 
 * You can respond to events by declaring event handler functions **inside the components**
 
@@ -194,7 +192,7 @@ Version: 1.0
 
 * Built-in components only support browser event names
 
-* Custom components can have custom handler `prop` name
+* Custom components can have custom handler name
 
 * Event handlers receive an **event object** as their only argument. By convention, it’s usually called `e`
 
@@ -228,7 +226,7 @@ Version: 1.0
     * The `set` function that lets you update the state to a different value and trigger a re-render
       * The `set` function **only updates the state variable for the next render**
 
-  ```jsx
+  ```react
   import { useState } from "react";
   
   function Component(props) {
@@ -250,7 +248,7 @@ Version: 1.0
   * [**Props** are like arguments you pass](https://react.dev/learn/passing-props-to-a-component) to a function. They let a parent component pass data to a child component and customize its appearance. For example, a `Form` can pass a `color` `prop` to a `Button`
   * [**State** is like a component’s memory.](https://react.dev/learn/state-a-components-memory) It lets a component keep track of some information and change it in response to interactions. For example, a `Button` might keep track of `isHovered` state
 
-### Render and Commit
+### Trigger, Render and Commit
 
 * The process of requesting and serving UI
   1. Triggering a render
@@ -259,7 +257,7 @@ Version: 1.0
   2. Rendering the component (**Calling your component function**)
      * On initial render, React will call the root component `root.render()`
      * For **subsequent renders**, React will call the function component whose `state` update triggered the render (this process is recursive)
-       * You may have thought about the performance issue, look at the [Performance section](https://legacy.reactjs.org/docs/optimizing-performance.html)
+       > You may have thought about the performance issue, look at the [Performance section](https://legacy.reactjs.org/docs/optimizing-performance.html)
   3. Committing to the DOM
      * For the initial render, React will use `appendChild()` DOM API to put all the DOM nodes it has created on the screen
      * For re-renders, React will apply the **minimal **necessary operations to make the DOM match the latest rendering output
@@ -282,7 +280,7 @@ Version: 1.0
 
 * Batching
 
-  * React waits until all code in the event handlers has run before processing your state updates
+  * React waits until all code in the event handlers or `useEffect()` has run before processing your state updates
 
 * Update `state` **based on its previous value**
 
@@ -290,7 +288,7 @@ Version: 1.0
 
   * [Reference](https://react.dev/reference/react/useState#setstate)
 
-  * **Updater functions must be pure** and only *return* the result
+  * Updater functions must be **pure** and only **return the result**
 
   * **React queues this function to be processed after all the other code in the event handler has run**
 
@@ -327,18 +325,21 @@ Version: 1.0
   ```
 
   * This will instruct React to update the DOM synchronously right after the code wrapped in `flushSync` executes
+  
+  > Using `flushSync` is uncommon and can hurt the performance of your app
 
 
 ### Updating Objects or Arrays in `state`
 
 * You shouldn't change objects or arrays that you hold in the `state` directly
 * Instead, when you want to update it, you need to create a new one (or make a copy of an existing one), and then set the `state` to use the copy
-* **Treat `state` as read-only**
+* Treat `state` as **immutable**
 * Updating a nested object or array of objects: [Immer](https://github.com/immerjs/use-immer)
   * To achieve deep clone
   * How to use Immer
     * Run `npm install use-immer` to add Immer as a dependency
-    * Then replace `import { useState } from 'react'` with `import { useImmer } from 'use-immer'`
+    * Replace `import { useState } from 'react'` with `import { useImmer } from 'use-immer'`
+    * Now you can change the `state` directly inside the updater function (**syntax sugar**)
 
 ### Component Lifecycle
 
@@ -367,6 +368,8 @@ Version: 1.0
 
 * Remove any non-essential `state`
 
+  * Derive values from essential `states`
+
 * Connect the event handlers to `setState`
 
   >  Components wrap controller and view together, but make them much easier to code and much less fragile
@@ -375,7 +378,7 @@ Version: 1.0
 
 * Group related state
 * Avoid contradiction
-* Avoid redundance
+* Avoid redundancy
 * Avoid duplication
 * Avoid deeply nested `state`
 
@@ -385,36 +388,41 @@ Version: 1.0
   * Sometimes, you want the `state` of two components to always change together. To do it, remove `state` from both of them, move it to their closest common parent, and then pass `state` and `setState` down to them **via `props`**
 * Uncontrolled components: components with local `state`
 * Controlled component: the important information in it is driven by `props` rather than its own local `state`
-* **When writing a component, consider which information in it should be controlled (*via `props`*), and which information should be uncontrolled (*via `state`*)**
+* When writing a component, consider which information in it should be controlled (*via `props`*), and which information should be uncontrolled (*via `state`*)
 * **Single source of truth**
 
 ### React maintain an UI tree (like DOM)
 
-* `state` is tied to a **position** and **component type** in the tree
+* `state` is tied to a ***position*** and ***component type*** in the tree
+  
   * **`state` is held inside React instead of "living" inside the component**
   * React preserves a component’s `state` for as long as it’s being rendered at its position in the UI tree. If it gets removed, or a different component gets rendered at the same position, React discards its `state`
-  * **It's the position in the UI tree - not in the JSX markup**
+  * **It's the position in the UI tree** - not in the JSX markup
     * Same components at the same position preserves `state`
     * Different components at the same position reset `state`
-* `key` can be used to make React distinguish between any components
-  * `key` isn't just for lists
-  * `key` is not globally unique, they only specify the position within the parent
-  * Use `key` for **resetting components at the same position**
   
-    * React will destroy the old component instance if the value of `key` has changed
-    * Unmount and remount the component
+* `key` can be used to make React distinguish between any components
+  
+  * `key` isn't just for lists
+  
+  * `key` is not globally unique, they only specify the position within the parent
+  
+    > **Trick**: Use `key` for **resetting components at the same position**
+    >
+    > * React will destroy the old component instance if the value of `key` has changed
+    > * Unmount and remount the component
 
 ### Context API
 
 * Prop drilling: passing shared data through multiple components layers
 
-* It can be a problem when you have too many `state` to manage
+  * It can be a problem when you have too many `state` to manage
 
-* Solution 1: Component Composition
+  * Solution 1: Component Composition
 
-* **Context**
+* **`Context`**
 
-  * Lets the parent component make some information available to any component in the tree below it—no matter how deep—without passing it explicitly through props
+  * Lets the parent component make some information available to any component in the tree below it—no matter how deep—without passing it explicitly through `props`
 
   * **How to use `Context`**
 
@@ -427,6 +435,7 @@ Version: 1.0
          import { createContext } from 'react';
          
          export const LevelContext = createContext(1);
+         // note: the value cannot only be states
          ```
 
        * The only argument to `createContext` is the *default* value
@@ -458,7 +467,7 @@ Version: 1.0
          }
          ```
 
-       * **Outsourcing `context` and `state` into a separate Provider component is also a common pattern**
+         > Outsourcing `context` and `state` into a separate Provider component is a common pattern
 
     3. Consume the context
 
@@ -485,20 +494,18 @@ Version: 1.0
 
        * React will re-execute the component function if the context value changes
 
-       * You can also outsource `useContext(LevelContext)` into the Provider component
-
-         ```react
-         // LevelContext.js
-         export function useLevel() {
-           return useContext(LevelContext);
-         }
-         
-         // Heading.js
-         import { useLevel } from "./LevelContext.js";
-         const level = useContext();
-         ```
-
-         * Export custom Hooks
+         > You can also outsource `useContext(LevelContext)` into the Provider component
+         >
+         > ```react
+         > // LevelContext.js
+         > export function useLevel() {
+         >   return useContext(LevelContext);
+         > }
+         > 
+         > // Heading.js
+         > import { useLevel } from "./LevelContext.js";
+         > const level = useContext();
+         > ```
 
   * **Context lets you write components that “adapt to their surroundings” and display themselves differently depending on *where* (or, in other words, *in which context*) they are being rendered**
 
@@ -508,7 +515,7 @@ Version: 1.0
 
   * One component may use or provide many different contexts without a problem
 
-  * **Use case for context**
+  * **Use case for `context`**
 
     * **Theming:** If your app lets the user change its appearance (e.g. dark mode), you can put a context provider at the top of your app, and use that context in components that need to adjust their visual look
     * **Current account:** Many components might need to know the currently logged in user. Putting it in context makes it convenient to read it anywhere in the tree. Some apps also let you operate multiple accounts at the same time (e.g. to leave a comment as a different user). In those cases, it can be convenient to wrap a part of the UI into a nested provider with a different current account value
@@ -519,11 +526,11 @@ Version: 1.0
 
 * A reducer in React or JavaScript programming is a function that reduce one or more complex values to a simpler one
 
-* You can consolidate state update logic with a reducer outside your component in a single function, called `reducer`
+* You can consolidate *state update logic* with a reducer outside your component in a single function, called `reducer`
 
 * How to use Reducer
 
-  1. Move from setting state to dispatch actions
+  1. Move from setting `state` to dispatch `actions`
 
      ```react
      // From this
@@ -629,7 +636,7 @@ Version: 1.0
      }
      ```
 
-     * It is recommend wrapping each `case` block into the `{` and `}` curly braces so that variables declared inside of different `case`s don’t clash with each other
+     * It is recommend wrapping each `case` block into the `{` and `}` curly braces so that variables declared inside of different `case` don’t clash with each other
      * Reducer function is declared **outside the component function** so that it won't be re-created every time the component gets updated
 
   3. Use the reducer from your component
@@ -644,7 +651,7 @@ Version: 1.0
      const [tasks, dispatch] = useReducer(tasksReducer, initialTasks);
      ```
 
-     * The `useReducer` Hook takes two arguments:
+     * The `useReducer()` Hook takes two arguments:
        1. A reducer function
        2. An initial state
      * And it returns:
@@ -659,7 +666,7 @@ Version: 1.0
 * Writing concise reducer with `immer`
 
   * `useImmerReducer`
-  * Reducers managed by `useImmerReducer` can mutate their first argument `draft` and don’t need to return state (**remember to `break`**)
+  * Reducers managed by `useImmerReducer` can mutate their first argument `state` and don’t need to return the new state (**remember to `break`**)
 
 ***
 
@@ -689,8 +696,6 @@ Version: 1.0
   * Storing and manipulating DOM elements
   * Storing other objects that aren't necessary to calculate the JSX
 
-* **Usually, you will access `refs` from event handlers**
-
 ### Manipulating DOM with `refs`
 
 * DOM manipulation is the most common use case for `refs`
@@ -718,12 +723,12 @@ Version: 1.0
     ```
 
     * `<MyInput ref={inputRef} />` tells React to put the corresponding DOM node into `inputRef.current`. However, it’s up to the `MyInput` component to opt into that—by default, it doesn’t
-    * The `MyInput` component is declared using `forwardRef`. **This opts it into receiving the `inputRef` from above as the second `ref` argument** which is declared after `props`
+    * The `MyInput` component is declared using `forwardRef()`. **This opts it into receiving the `inputRef` from above as the second `ref` argument** which is declared after `props`
     * `MyInput` itself passes the `ref` it received to the `<input>` inside of it
 
-  * In design systems, it is a common pattern for low-level components like buttons, inputs, and so on, to forward their refs to their DOM nodes
+    > In design systems, it is a common pattern for low-level components like buttons, inputs, and so on, to forward their refs to their DOM nodes
 
-* You can expose component APIs via `useImperativeHandle` hook
+* You can expose component APIs via [`useImperativeHandle()`](https://react.dev/reference/react/useImperativeHandle)
 
 * Avoid changing DOM nodes managed by React
 
@@ -740,15 +745,12 @@ Version: 1.0
   * **Event handlers**
     * Nested functions inside your components that do things rather than just calculate them
     * Event handlers contain [“side effects”](https://en.wikipedia.org/wiki/Side_effect_(computer_science)) (they change the program’s state) caused by a specific user action
-  * Sometimes it isn't enough
-  
-* `effects` let you specify side effects are **caused by rendering itself, or father components' `state` change (*which is, essentially, re-rendering itself*), rather than by a particular event**
+
+* Sometimes it isn't enough
+
+* `effects` let you specify side effects are **caused by rendering itself, or parent components' `state` change (*which is, essentially, re-rendering itself*), rather than by a particular event**
 
   > *For example, a `state` change in the event handler of a component can cause some side effects that need to be handled in the `useEffect` inside the child component*
-  >
-  > Logic inside event handlers is **not reactive**
-  >
-  > Logic inside Effects is **reactive**
 
 * `effects` run **at the end of a [commit](#render-and-commit) after the screen updates**. This is a good time to synchronize the React components with some **external system** (like network or a third-party library or browser APIs)
 
@@ -770,8 +772,8 @@ Version: 1.0
 
      * Most `effects` should only re-run when needed rather than after every render
      * You can tell React to skip unnecessary re-running the `effect` by specifying an **array** of `dependencies` as the second argument to the `useEffect` call
-     * The dependency array can contain multiple dependencies. **React will only skip re-running the `effect` if *all* of the dependencies you specify have exactly the same values as they had during the previous render**
-     * You can't "choose" your dependencies
+     * The `dependencies` array can contain multiple dependencies. **React will only skip re-running the `effect` if *all* of the dependencies you specify have exactly the same values as they had during the previous render**
+     * You can't "choose" your dependencies, linter does
 
      ```react
      useEffect(() => {
@@ -790,8 +792,8 @@ Version: 1.0
      *  React compares the dependency values using the [`Object.is`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is) comparison
        * The problem with object or function dependencies: infinite loop
          * `effect` execute even if the dependencies are logically equivalent (*with different pointers*)
-         * **`useCallback`** to solve this problem
-           * Wrap the function dependencies in the `useCallback()`
+         * [**`useCallback()`**](https://react.dev/reference/react/useCallback) to solve this problem
+           * Cache the function definition between re-renders
          * Or, try to avoid them
      *  Mutable values (including global variables) aren’t reactive, so they shouldn't be dependencies
         *  A mutable value like `location.pathname` can’t be a dependency
@@ -801,8 +803,8 @@ Version: 1.0
   3. Add cleanup if needed
 
      * Some `effects` need to specify how to stop, undo, or clean up whatever they were doing
-     * Return a cleanup function from your `effect`
-     * React will call your cleanup function **each time before the `effect` runs again**, and one final time when **the component unmounts (gets removed)**
+     * Return a cleanup function from your `useEffect()`
+     * React will call your cleanup function **each time before the `useEffect()` runs again**, and one final time when **the component unmounts**
 
      ```react
        useEffect(() => {
@@ -817,17 +819,9 @@ Version: 1.0
 * A potential problem with `effects` and `setState`: an infinte loop
 
   * `effect` execute after rendering, `setState` inside `effect` re-trigger the rendering
-    * Solution: remove `state` from dependencies and pass updater function to `setState` in `useEffect()`
+  * Solution: remove `state` from dependencies and pass updater function to `setState` in `useEffect()`
   
-* How to handle React remount the component twice in development
-
-  * Controlling non-React widgets
-  * Subscribing to events
-  * Triggering animations
-  * Fetching data
-  * Sending analytics
-
-* Additionally, React will remount the `effects` whenever you save a file in development
+* React will remount the `effects` whenever you save a file in development
 
 ### When NOT to use `useEffect()`
 
@@ -835,13 +829,13 @@ Version: 1.0
   * **Those codes wil execute once the first time the file is imported**
 * Updating state based on `props` and `state`
   * Calculate the value inside the component
-* 
+* [Etc.](https://react.dev/learn/you-might-not-need-an-effect#initializing-the-application)
 
 ***
 
 ## React Hooks
 
-* **Hooks are functions that let you "hook into" React state and lifecycle features from function components**
+* **Hooks are functions that let you "hook into" React state and features from function components**
 * Functions starting with `use`
 * Can only be called at the top level of your components or your own Hooks
 * Can only call Hooks on the top level
@@ -1124,20 +1118,24 @@ export async function updateUserPlaces(places) {
 ### Validating User Input
 
 * Compute the `isValid` logic and render conditionally
+
 * Always add `onSubmit` validation
+
 * Validating input on every key stoke via `state`
   * Errors may be shown too early
+  
 * Validating input upon lost focus
-  * `OnBlue={handleInputBlur}`
+  * `OnBlur={handleInputBlur}`
   * Errors may not disappear when the user starts to type again
-
-> Combining validating on key stoke and lost focus is a good pattern
+  
+  > Combining validating on key stoke and lost focus is a good pattern
 
 * Validating input upon form submission
+
 * Validating input via built-in validation `props`
   * `type`, `required`, etc.
 
-> Combining custom and built-in validation logic is also a good pattern
+  > Combining custom and built-in validation logic is also a good pattern
 
 ### Building Custom Solutions
 
@@ -1162,7 +1160,7 @@ export async function updateUserPlaces(places) {
 
 * Redux Toolkit
 
-  * [**Redux Toolkit**](https://redux-toolkit.js.org/) (also known as **"RTK"** for short) is our official recommended approach for writing Redux logic
+  * [**Redux Toolkit**](https://redux-toolkit.js.org/) (also known as **"RTK"** for short) is the official recommended approach for writing Redux logic
 
   * The `@reduxjs/toolkit` package wraps around the core `redux` package, and contains API methods and common dependencies that are essential for building a Redux app
 
@@ -1217,7 +1215,7 @@ export async function updateUserPlaces(places) {
 
   * The Redux `store` has a method called `dispatch`
 
-  * **The only way to update the `state` is to call store.dispatch(action)**
+  * **The only way to update the `state` is to call `store.dispatch(action)`**
 
   * The `store` will run its `slice reducer` function and save the new `state` value inside
 
@@ -1309,7 +1307,7 @@ export async function updateUserPlaces(places) {
 ```react
 // store.js
 import { configureStore } from '@reduxjs/toolkit'
-import counterReducer from '../features/counter/counterSlice'
+import counterReducer from '../store/counterSlice'
 
 export default configureStore({
   // root reducer
@@ -1330,7 +1328,7 @@ export default configureStore({
 // counterSlice.js
 import { createSlice } from '@reduxjs/toolkit'
 
-export const counterSlice = createSlice({
+const counterSlice = createSlice({
   name: 'counter',
   initialState: {
     value: 0
@@ -1373,7 +1371,6 @@ import {
   decrement,
   increment,
   incrementByAmount,
-  incrementAsync,
   selectCount
 } from './counterSlice'
 import styles from './Counter.module.css'
@@ -1496,6 +1493,8 @@ ReactDOM.render(
 ***
 
 ## React Router
+
+* React is a single page application (SPA)
 
 * Client-side code simply watches url changes and then loads different React components, instead of fetching new html files
 
