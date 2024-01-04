@@ -234,6 +234,32 @@ Version: 1.0
   }
   ```
 
+  * Avoid recreating the initial state
+
+    * React saves the initial state once and ignores it on the next renders.
+
+      ```javascript
+      function TodoList() {
+      
+        const [todos, setTodos] = useState(createInitialTodos());
+      
+        // ...
+      ```
+
+    * Although the result of `createInitialTodos()` is only used for the initial render, you’re still calling this function on every render. This can be wasteful if it’s creating large arrays or performing expensive calculations.
+
+    * To solve this, you may **pass it as an initializer function** to `useState` instead:
+
+      ```javascript
+      function TodoList() {
+      
+        const [todos, setTodos] = useState(createInitialTodos);
+      
+        // ...
+      ```
+
+    * Notice that you’re passing `createInitialTodos`, which is the *function itself*, and not `createInitialTodos()`, which is the result of calling it. If you pass a function to `useState`, React will only call it during initialization.
+
 * You can have as many state variables of as many types as you like in one component
 
 * `state` is isolated and private
